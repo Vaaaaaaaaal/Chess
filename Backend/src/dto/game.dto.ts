@@ -46,3 +46,13 @@ export class UpdateGameDto {
     this.is_public = is_public;
   }
 }
+
+export interface GameDto {
+  id: number;
+  player1_id: number;
+  username2: string;
+  winner_id: number | null;
+  is_public: boolean;
+  game_state: string;
+  created_at: Date;
+}

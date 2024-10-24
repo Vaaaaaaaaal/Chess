@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import { Sequelize } from "sequelize";
-import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "./routes";
 
@@ -32,9 +31,16 @@ const options = {
   },
   apis: ["./src/routes/*.ts"], // Chemin vers vos fichiers contenant les commentaires Swagger
 };
-
-const specs = swaggerJsdoc(options);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.use(express.static("public"));
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(undefined, {
+    swaggerOptions: {
+      url: "/swagger.json",
+    },
+  })
+);
 
 app.use(express.json());
 
