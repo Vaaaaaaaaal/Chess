@@ -7,24 +7,30 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node-dev src/server.ts"
+    "start": "ts-node-dev src/server.ts",
+    "generate": "npm run tsoa:routes && npm run tsoa:spec",
+    "tsoa:routes": "tsoa routes",
+    "tsoa:spec": "tsoa spec"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tsoa/runtime": "^6.5.1",
     "@types/express": "^5.0.0",
     "@types/node": "^22.7.9",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.6",
+    "class-validator": "^0.14.1",
     "express": "^4.21.1",
     "mysql2": "^3.11.3",
     "sequelize": "^6.37.4",
     "sqlite3": "^5.1.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "tsoa": "^6.5.1"
   },
   "devDependencies": {
     "typescript": "^5.6.3"

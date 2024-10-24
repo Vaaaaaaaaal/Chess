@@ -3,6 +3,7 @@ import path from "path";
 import { Sequelize } from "sequelize";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import { RegisterRoutes } from "./routes";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,7 +30,7 @@ const options = {
       },
     ],
   },
-  apis: ["./src/**/*.ts"], // Chemin vers vos fichiers contenant les commentaires Swagger
+  apis: ["./src/routes/*.ts"], // Chemin vers vos fichiers contenant les commentaires Swagger
 };
 
 const specs = swaggerJsdoc(options);
@@ -49,6 +50,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Serveur TypeScript avec Express, Sequelize et Swagger");
 });
+
+RegisterRoutes(app);
 
 async function startServer() {
   try {
