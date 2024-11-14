@@ -1,12 +1,18 @@
+import bcrypt from "bcrypt";
 import User from "../models/user.model";
 
 class UserService {
   async createUser(
     username: string,
     email: string,
-    password_hash: string
+    password: string
   ): Promise<User> {
-    return User.create({ username, email, password_hash });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return User.create({
+      username,
+      email,
+      password_hash: hashedPassword,
+    });
   }
 
   async getUserById(id: number): Promise<User | null> {

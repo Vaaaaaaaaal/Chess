@@ -1,82 +1,84 @@
-import { NextFunction, Request, Response } from "express";
-import { Body, Controller, Delete, Get, Path, Put, Route, Tags } from "tsoa";
-import { CreateGameDto, GameDto, UpdateGameDto } from "../dto/game.dto";
-import Game from "../models/game.model";
+import {
+  Body,
+  Controller,
+  Get,
+  Path,
+  Post,
+  Request,
+  Route,
+  Security,
+  Tags,
+} from "tsoa";
+import { CreateGameDto, GameResponse } from "../dto/game.dto";
 import GameService from "../services/game.service";
 
 @Route("games")
 @Tags("Game")
 export class GameController extends Controller {
-  private gameService: typeof GameService;
-
-  constructor() {
-    super();
-    this.gameService = GameService;
-  }
-
-  private mapGameToDto(game: Game): GameDto {
-    return {
-      id: game.id,
-      player1_id: game.player1_id,
-      username2: game.username2,
-      winner_id: game.winner_id,
-      is_public: game.is_public,
-      game_state: game.game_state,
-      created_at: game.created_at,
-    };
-  }
-
-  public createGame = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  @Security("jwt")
+  @Post()
+  public async createGame(
+    @Body() createGameDto: CreateGameDto,
+    @Request() request: any
+  ): Promise<GameResponse> {
     try {
-      const gameData: CreateGameDto = req.body as CreateGameDto;
-      const createdGame: Game = await this.gameService.createGame(
-        gameData.player1_id,
-        gameData.username2,
-        gameData.is_public ? "true" : "false"
-      );
-      res.status(201).json(this.mapGameToDto(createdGame));
+      console.log("User ID from token:", request.user.id);
+      console.log("Create game DTO:", createGameDto);
+
+      const game = await GameService.createGame({
+        ...createGameDto,
+        player1_id: request.user.id,
+      });
+
+      return this.mapGameToResponse(game);
     } catch (error) {
-      next(error);
+      console.error("Game creation error:", error);
+      this.setStatus(400);
+      throw error;
     }
-  };
+  }
 
   @Get("{id}")
-  public async getGame(@Path() id: number): Promise<GameDto | null> {
-    const game = await this.gameService.getGame(id);
-    return game ? this.mapGameToDto(game) : null;
+  public async getGame(@Path() id: number): Promise<GameResponse> {
+    const game = await GameService.getGame(id);
+    if (!game) {
+      this.setStatus(404);
+      throw new Error("Partie non trouvée");
+    }
+    return this.mapGameToResponse(game);
   }
 
+  @Security("jwt")
   @Get()
-  public async getAllGames(): Promise<GameDto[]> {
-    const games = await this.gameService.getAllGames();
-    return games.map(this.mapGameToDto);
-  }
-
-  @Put("{id}")
-  public async updateGame(
-    @Path() id: number,
-    @Body() updateGameDto: UpdateGameDto
-  ): Promise<GameDto | null> {
-    const [, updatedGames] = await this.gameService.updateGame(
-      id,
-      updateGameDto
-    );
-    const updatedGame = updatedGames[0];
-    return updatedGame ? this.mapGameToDto(updatedGame) : null;
-  }
-
-  @Delete("{id}")
-  public async deleteGame(@Path() id: number): Promise<void> {
-    await this.gameService.deleteGame(id);
+  public async getAllGames(): Promise<GameResponse[]> {
+    const games = await GameService.getPublicGames();
+    return games.map(this.mapGameToResponse);
   }
 
   @Get("public")
-  public async getPublicGames(): Promise<GameDto[]> {
-    const games = await this.gameService.getPublicGames();
-    return games.map(this.mapGameToDto);
+  public async getPublicGames(): Promise<GameResponse[]> {
+    const games = await GameService.getPublicGames();
+    return games.map(this.mapGameToResponse);
+  }
+
+  @Security("jwt")
+  @Get("my")
+  public async getMyGames(@Request() request: any): Promise<GameResponse[]> {
+    const games = await GameService.getGamesByPlayer(request.user.id);
+    return games.map(this.mapGameToResponse);
+  }
+
+  private mapGameToResponse(game: any): GameResponse {
+    return {
+      id: game.id,
+      player1_id: game.player1_id,
+      username2: game.player2?.username || game.username2,
+      winner_id: game.winner_id,
+      is_public: game.is_public,
+      status: game.status,
+      game_state: game.game_state,
+      created_at: game.created_at,
+      updated_at: game.updated_at,
+    };
   }
 }
