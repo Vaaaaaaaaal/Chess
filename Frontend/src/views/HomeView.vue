@@ -6,7 +6,9 @@
     </p>
 
     <div class="actions">
-      <button class="btn primary">Nouvelle partie</button>
+      <button class="btn primary" @click="$router.push('/game')">
+        Nouvelle partie
+      </button>
       <button class="btn secondary">Voir le classement</button>
     </div>
 

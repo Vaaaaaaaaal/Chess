@@ -1,30 +1,24 @@
 <template>
   <div class="game-view">
-    <!-- Header avec le tour du joueur -->
     <div class="turn-indicator">Au tour de {{ currentPlayer }}</div>
 
-    <!-- Plateau d'échecs -->
     <div class="chess-board">
-      <!-- Création de la grille 8x8 -->
       <div v-for="row in 8" :key="row" class="board-row">
         <div
           v-for="col in 8"
           :key="col"
           :class="['board-cell', getCellColor(row, col)]"
         >
-          <!-- Pièces à implémenter -->
           <div v-if="getPiece(row, col)" class="piece">
-            {{ getPiece(row, col) }}
+            <img :src="getPiece(row, col)" :alt="getPiece(row, col)" />
           </div>
         </div>
       </div>
 
-      <!-- Labels des colonnes -->
       <div class="col-labels">
         <span v-for="col in columns" :key="col">{{ col }}</span>
       </div>
 
-      <!-- Labels des rangées -->
       <div class="row-labels">
         <span v-for="row in 8" :key="row">{{ row }}</span>
       </div>
@@ -34,18 +28,84 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import BlackBishop from "../assets/chessIcon/BlackBishop.png";
+import BlackKing from "../assets/chessIcon/BlackKing.png";
+import BlackKnight from "../assets/chessIcon/BlackKnight.png";
+import BlackPawn from "../assets/chessIcon/BlackPawn.png";
+import BlackQueen from "../assets/chessIcon/BlackQueen.png";
+import BlackRook from "../assets/chessIcon/BlackRook.png";
+import WhiteBishop from "../assets/chessIcon/WhiteBishop.png";
+import WhiteKing from "../assets/chessIcon/WhiteKing.png";
+import WhiteKnight from "../assets/chessIcon/WhiteKnight.png";
+import WhitePawn from "../assets/chessIcon/WhitePawn.png";
+import WhiteQueen from "../assets/chessIcon/WhiteQueen.png";
+import WhiteRook from "../assets/chessIcon/WhiteRook.png";
 
 const currentPlayer = ref("ValentinBG47");
 const columns = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
-// Détermine la couleur de la cellule (rouge ou blanche)
+const pieces = ref({
+  white: {
+    king: WhiteKing,
+    queen: WhiteQueen,
+    rook: WhiteRook,
+    bishop: WhiteBishop,
+    knight: WhiteKnight,
+    pawn: WhitePawn,
+  },
+  black: {
+    king: BlackKing,
+    queen: BlackQueen,
+    rook: BlackRook,
+    bishop: BlackBishop,
+    knight: BlackKnight,
+    pawn: BlackPawn,
+  },
+});
+
 const getCellColor = (row: number, col: number): string => {
   return (row + col) % 2 === 0 ? "white-cell" : "red-cell";
 };
 
-// Fonction temporaire pour les pièces (à implémenter avec de vraies pièces)
 const getPiece = (row: number, col: number): string => {
-  // Logique temporaire pour l'affichage des pièces
+  if (row === 8) {
+    switch (col) {
+      case 1:
+      case 8:
+        return pieces.value.white.rook;
+      case 2:
+      case 7:
+        return pieces.value.white.knight;
+      case 3:
+      case 6:
+        return pieces.value.white.bishop;
+      case 4:
+        return pieces.value.white.queen;
+      case 5:
+        return pieces.value.white.king;
+    }
+  }
+  if (row === 7) return pieces.value.white.pawn;
+
+  if (row === 1) {
+    switch (col) {
+      case 1:
+      case 8:
+        return pieces.value.black.rook;
+      case 2:
+      case 7:
+        return pieces.value.black.knight;
+      case 3:
+      case 6:
+        return pieces.value.black.bishop;
+      case 4:
+        return pieces.value.black.queen;
+      case 5:
+        return pieces.value.black.king;
+    }
+  }
+  if (row === 2) return pieces.value.black.pawn;
+
   return "";
 };
 </script>
@@ -108,6 +168,12 @@ const getPiece = (row: number, col: number): string => {
   justify-content: center;
   align-items: center;
   font-size: 2.5em;
+}
+
+.piece img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .col-labels {
