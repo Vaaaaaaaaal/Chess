@@ -7,6 +7,164 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"UserDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"username",
+					"email",
+					"created_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateUserDto": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_UserDto_": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"MoveDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"game_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"move_number": {
+						"type": "number",
+						"format": "double"
+					},
+					"move": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"game_id",
+					"move_number",
+					"move",
+					"created_at"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateMoveDto": {
+				"properties": {
+					"game_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"move_number": {
+						"type": "number",
+						"format": "double"
+					},
+					"move": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"game_id",
+					"move_number",
+					"move"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LeaderboardDto": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"user_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"total_games": {
+						"type": "number",
+						"format": "double"
+					},
+					"wins": {
+						"type": "number",
+						"format": "double"
+					},
+					"losses": {
+						"type": "number",
+						"format": "double"
+					},
+					"draws": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id",
+					"user_id",
+					"total_games",
+					"wins",
+					"losses",
+					"draws"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GameDto": {
 				"properties": {
 					"id": {
@@ -76,6 +234,249 @@
 		"contact": {}
 	},
 	"paths": {
+		"/users/register": {
+			"post": {
+				"operationId": "RegisterUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/UserDto"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/UserDto"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_UserDto_"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/moves": {
+			"post": {
+				"operationId": "CreateMove",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MoveDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Move"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateMoveDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/moves/{game_id}": {
+			"get": {
+				"operationId": "GetMovesByGameId",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MoveDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Move"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "game_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/leaderboard": {
+			"get": {
+				"operationId": "GetLeaderboard",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/LeaderboardDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/leaderboard/{id}": {
+			"get": {
+				"operationId": "GetUserLeaderboard",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/LeaderboardDto"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/games/{id}": {
 			"get": {
 				"operationId": "GetGame",
@@ -96,6 +497,9 @@
 						}
 					}
 				},
+				"tags": [
+					"Game"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -128,6 +532,9 @@
 						}
 					}
 				},
+				"tags": [
+					"Game"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -158,6 +565,9 @@
 						"description": "No content"
 					}
 				},
+				"tags": [
+					"Game"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -190,6 +600,9 @@
 						}
 					}
 				},
+				"tags": [
+					"Game"
+				],
 				"security": [],
 				"parameters": []
 			}
@@ -212,6 +625,9 @@
 						}
 					}
 				},
+				"tags": [
+					"Game"
+				],
 				"security": [],
 				"parameters": []
 			}

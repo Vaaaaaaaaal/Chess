@@ -11,7 +11,8 @@
     "moduleResolution": "node",
     "baseUrl": "./src",
     "paths": {
-      "*": ["*"]
+      "*": ["*"],
+      "tsoa": ["../node_modules/tsoa"]
     }
   }
 }

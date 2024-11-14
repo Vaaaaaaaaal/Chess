@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { Body, Controller, Delete, Get, Path, Put, Route } from "tsoa";
+import { Body, Controller, Delete, Get, Path, Put, Route, Tags } from "tsoa";
 import { CreateGameDto, GameDto, UpdateGameDto } from "../dto/game.dto";
 import Game from "../models/game.model";
 import GameService from "../services/game.service";
 
 @Route("games")
+@Tags("Game")
 export class GameController extends Controller {
   private gameService: typeof GameService;
 
