@@ -1,18 +1,13 @@
 import express from "express";
 import path from "path";
-import { Sequelize } from "sequelize";
 import swaggerUi from "swagger-ui-express";
+import db from "./config/database";
 import { RegisterRoutes } from "./routes";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 const dbPath = path.join(__dirname, "..", "Database.db");
-
-const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: dbPath,
-});
 
 // Configuration Swagger
 const options = {
@@ -59,17 +54,41 @@ app.get("/", (req, res) => {
 
 RegisterRoutes(app);
 
+async function initDb() {
+  try {
+    await db.sync({
+      force: false,
+      alter: false,
+      logging: false,
+    });
+    console.log("✅ Base de données synchronisée avec succès");
+  } catch (error) {
+    console.error(
+      "❌ Erreur lors de la synchronisation de la base de données:",
+      error
+    );
+    throw error;
+  }
+}
+
 async function startServer() {
   try {
-    await sequelize.authenticate();
-    console.log("Connexion à la base de données établie avec succès.");
+    await db.authenticate();
+    console.log("✅ Connexion à la base de données établie avec succès.");
+
+    // Initialiser/synchroniser la base de données
+    await initDb();
 
     app.listen(port, () => {
-      console.log(`Serveur en cours d'exécution sur le port ${port}`);
+      console.log(`🚀 Serveur en cours d'exécution sur le port ${port}`);
     });
   } catch (error) {
-    console.error("Impossible de se connecter à la base de données:", error);
+    console.error("❌ Erreur serveur:", error);
+    // En cas d'erreur, fermer proprement la connexion
+    await db.close();
   }
 }
 
 startServer();
+
+export default initDb;

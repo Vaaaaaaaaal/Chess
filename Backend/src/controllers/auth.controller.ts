@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Route, Tags } from "tsoa";
+import { Body, Controller, Get, Post, Route, Security, Tags } from "tsoa";
 import {
   LoginDto,
   LoginResponse,
@@ -20,16 +20,19 @@ export class AuthController extends Controller {
         registerDto.email,
         registerDto.password
       );
+
+      if (!user) {
+        this.setStatus(400);
+        throw new Error("Échec de la création de l'utilisateur");
+      }
+
       return {
         message: "Inscription réussie",
         userId: user.id,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.setStatus(400);
-      return {
-        message: "Erreur lors de l'inscription",
-        userId: 0,
-      };
+      throw new Error(error.message || "Erreur lors de l'inscription");
     }
   }
 
@@ -48,6 +51,22 @@ export class AuthController extends Controller {
     } catch (error) {
       this.setStatus(401);
       throw error;
+    }
+  }
+
+  @Get("/verify")
+  @Security("jwt")
+  public async verifyToken(): Promise<{ message: string; userId: number }> {
+    try {
+      // @ts-ignore - L'utilisateur est ajouté par le middleware d'authentification
+      const userId = this.request?.user?.id;
+      return {
+        message: "Token valide",
+        userId: userId,
+      };
+    } catch (error) {
+      this.setStatus(401);
+      throw new Error("Token invalide");
     }
   }
 }
