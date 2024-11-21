@@ -37,7 +37,6 @@ export function useAuth() {
   };
 
   const startTokenRefresh = () => {
-    // 19 minutes en millisecondes
     const REFRESH_INTERVAL = 19 * 60 * 1000;
 
     if (refreshTokenInterval) {
