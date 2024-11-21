@@ -865,18 +865,18 @@ h2 {
 
 .visibility-options {
   display: flex;
-  gap: 1rem;
+  justify-content: center; /* Centre les boutons horizontalement */
+  gap: 2rem; /* Augmente l'espace entre les boutons */
   width: 100%;
-  margin-top: 1rem;
+  margin: 2rem 0;
 }
 
 .visibility-btn {
-  flex: 1;
-  padding: 0.8rem;
-  border: 2px solid #3a3a3a;
-  background-color: transparent;
+  padding: 0.8rem 1.5rem;
+  border: 2px solid #333;
+  border-radius: 25px;
+  background: transparent;
   color: white;
-  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
 }
