@@ -3,6 +3,10 @@
     <div class="register-card">
       <h1 class="register-title">Créer un compte</h1>
 
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
+
       <div class="register-info">
         <h2>Pseudo</h2>
         <div class="input-group">
@@ -51,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import "primeicons/primeicons.css";
+import axiosInstance from "@/utils/axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -60,35 +64,38 @@ const username = ref("");
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
+const error = ref("");
 
 const handleRegister = async () => {
-  if (password.value !== confirmPassword.value) {
-    alert("Les mots de passe ne correspondent pas");
-    return;
-  }
-
   try {
-    // Appel API pour l'inscription
-    const response = await fetch("http://localhost:3000/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username.value,
-        email: email.value,
-        password: password.value,
-      }),
+    if (password.value !== confirmPassword.value) {
+      error.value = "Les mots de passe ne correspondent pas";
+      return;
+    }
+
+    const response = await axiosInstance.post("/auth/register", {
+      username: username.value,
+      email: email.value,
+      password: password.value,
     });
 
-    if (response.ok) {
-      router.push("/login"); // Redirection vers la page de connexion après inscription
-    } else {
-      const error = await response.json();
-      alert(error.message || "Erreur lors de l'inscription");
+    if (response.status === 200) {
+      router.push("/login");
     }
-  } catch (error) {
-    alert("Erreur lors de l'inscription");
+  } catch (err: any) {
+    console.error("Erreur détaillée:", err);
+    error.value = err.response?.data?.message || "Erreur lors de l'inscription";
   }
 };
 </script>
+
+<style scoped>
+.error-message {
+  color: #ff4444;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(255, 68, 68, 0.1);
+  border-radius: 4px;
+}
+</style>
