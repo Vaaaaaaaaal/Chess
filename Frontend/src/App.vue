@@ -7,9 +7,11 @@
         </router-link>
       </div>
       <ul class="navbar-menu">
-        <li><router-link to="/play">Jouer</router-link></li>
-        <li><router-link to="/leaderboard">Classement</router-link></li>
-        <li><router-link to="/profile">Profil</router-link></li>
+        <li><router-link to="/game">Jouer</router-link></li>
+        <li><router-link to="/rank">Classement</router-link></li>
+        <li>
+          <router-link to="/profile"><i class="pi pi-user"></i></router-link>
+        </li>
       </ul>
     </nav>
 
