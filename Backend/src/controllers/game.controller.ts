@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Route, Security, Tags } from "tsoa";
+import { Body, Controller, Header, Post, Route, Security, Tags } from "tsoa";
 import { CreateGameDto, GameResponse } from "../dto/game.dto";
 import GameService from "../services/game.service";
 
@@ -8,6 +8,7 @@ export class GameController extends Controller {
   @Post("/")
   @Security("jwt")
   public async createGame(
+    @Header("authorization") authorization: string,
     @Body() createGameDto: CreateGameDto
   ): Promise<GameResponse> {
     try {

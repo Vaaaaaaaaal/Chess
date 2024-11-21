@@ -39,6 +39,12 @@ class AuthService {
       },
     };
   }
+
+  public static verifyToken(token: string): { userId: string } {
+    const secret = process.env.JWT_SECRET || "your-secret-key";
+    const decoded = jwt.verify(token, secret) as { userId: string };
+    return decoded;
+  }
 }
 
 export default new AuthService();
