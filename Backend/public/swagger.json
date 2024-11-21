@@ -75,54 +75,33 @@
 			},
 			"MoveDto": {
 				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"game_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"move_number": {
-						"type": "number",
-						"format": "double"
-					},
-					"move": {
+					"from_position": {
 						"type": "string"
 					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"game_id",
-					"move_number",
-					"move",
-					"created_at"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CreateMoveDto": {
-				"properties": {
-					"game_id": {
-						"type": "number",
-						"format": "double"
+					"to_position": {
+						"type": "string"
 					},
-					"move_number": {
-						"type": "number",
-						"format": "double"
+					"piece_type": {
+						"type": "string"
 					},
-					"move": {
+					"captured_piece": {
+						"type": "string"
+					},
+					"is_check": {
+						"type": "boolean"
+					},
+					"is_checkmate": {
+						"type": "boolean"
+					},
+					"game_state": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"game_id",
-					"move_number",
-					"move"
+					"from_position",
+					"to_position",
+					"piece_type",
+					"game_state"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -165,7 +144,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"GameDto": {
+			"GameResponse": {
 				"properties": {
 					"id": {
 						"type": "number",
@@ -180,11 +159,13 @@
 					},
 					"winner_id": {
 						"type": "number",
-						"format": "double",
-						"nullable": true
+						"format": "double"
 					},
 					"is_public": {
 						"type": "boolean"
+					},
+					"status": {
+						"type": "string"
 					},
 					"game_state": {
 						"type": "string"
@@ -192,38 +173,130 @@
 					"created_at": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
 					}
 				},
 				"required": [
 					"id",
 					"player1_id",
-					"username2",
-					"winner_id",
 					"is_public",
+					"status",
 					"game_state",
-					"created_at"
+					"created_at",
+					"updated_at"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UpdateGameDto": {
+			"CreateGameDto": {
 				"properties": {
-					"winner_id": {
+					"player1_id": {
 						"type": "number",
 						"format": "double"
 					},
-					"game_state": {
+					"username2": {
+						"type": "string"
+					},
+					"initialState": {
 						"type": "string"
 					},
 					"is_public": {
-						"type": "boolean"
+						"type": "boolean",
+						"default": false
 					}
 				},
+				"required": [
+					"player1_id",
+					"initialState"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"message",
+					"userId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterDto": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginResponse": {
+				"properties": {
+					"token": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"token",
+					"userId",
+					"username"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginDto": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
 				"type": "object",
 				"additionalProperties": false
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
 	},
 	"info": {
 		"title": "backend",
@@ -348,7 +421,7 @@
 				}
 			}
 		},
-		"/moves": {
+		"/moves/games/{gameId}": {
 			"post": {
 				"operationId": "CreateMove",
 				"responses": {
@@ -356,9 +429,7 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/MoveDto"
-								}
+								"schema": {}
 							}
 						}
 					}
@@ -366,21 +437,33 @@
 				"tags": [
 					"Move"
 				],
-				"security": [],
-				"parameters": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "gameId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateMoveDto"
+								"$ref": "#/components/schemas/MoveDto"
 							}
 						}
 					}
 				}
-			}
-		},
-		"/moves/{game_id}": {
+			},
 			"get": {
 				"operationId": "GetMovesByGameId",
 				"responses": {
@@ -389,9 +472,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/MoveDto"
-									},
+									"items": {},
 									"type": "array"
 								}
 							}
@@ -405,7 +486,7 @@
 				"parameters": [
 					{
 						"in": "path",
-						"name": "game_id",
+						"name": "gameId",
 						"required": true,
 						"schema": {
 							"format": "double",
@@ -477,21 +558,16 @@
 				]
 			}
 		},
-		"/games/{id}": {
-			"get": {
-				"operationId": "GetGame",
+		"/games": {
+			"post": {
+				"operationId": "CreateGame",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/GameDto"
-										}
-									],
-									"nullable": true
+									"$ref": "#/components/schemas/GameResponse"
 								}
 							}
 						}
@@ -500,89 +576,23 @@
 				"tags": [
 					"Game"
 				],
-				"security": [],
-				"parameters": [
+				"security": [
 					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			},
-			"put": {
-				"operationId": "UpdateGame",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/GameDto"
-										}
-									],
-									"nullable": true
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Game"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"jwt": []
 					}
 				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UpdateGameDto"
+								"$ref": "#/components/schemas/CreateGameDto"
 							}
 						}
 					}
 				}
 			},
-			"delete": {
-				"operationId": "DeleteGame",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Game"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/games": {
 			"get": {
 				"operationId": "GetAllGames",
 				"responses": {
@@ -592,7 +602,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/GameDto"
+										"$ref": "#/components/schemas/GameResponse"
 									},
 									"type": "array"
 								}
@@ -603,8 +613,44 @@
 				"tags": [
 					"Game"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": []
+			}
+		},
+		"/games/{id}": {
+			"get": {
+				"operationId": "GetGame",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GameResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Game"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/games/public": {
@@ -617,7 +663,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/GameDto"
+										"$ref": "#/components/schemas/GameResponse"
 									},
 									"type": "array"
 								}
@@ -630,6 +676,99 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/games/my": {
+			"get": {
+				"operationId": "GetMyGames",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/GameResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Game"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RegisterResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LoginResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginDto"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

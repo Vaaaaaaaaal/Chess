@@ -1,20 +1,41 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsOptional, IsString } from "class-validator";
 
-export class CreateMoveDto {
-  @IsNumber()
-  game_id!: number;
-
-  @IsNumber()
-  move_number!: number;
+export class MoveDto {
+  @IsString()
+  from_position!: string;
 
   @IsString()
-  move!: string;
+  to_position!: string;
+
+  @IsString()
+  piece_type!: string;
+
+  @IsString()
+  @IsOptional()
+  captured_piece?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  is_check?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  is_checkmate?: boolean;
+
+  @IsString()
+  game_state!: string;
 }
 
-export interface MoveDto {
+export interface MoveResponse {
   id: number;
   game_id: number;
+  player_id: number;
+  from_position: string;
+  to_position: string;
+  piece_type: string;
+  captured_piece?: string;
+  is_check: boolean;
+  is_checkmate: boolean;
   move_number: number;
-  move: string;
   created_at: Date;
 }
