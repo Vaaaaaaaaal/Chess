@@ -133,9 +133,11 @@
   justify-content: center;
   position: relative;
   margin-bottom: 3rem;
+  text-align: center;
 }
 
-.profile-icon {
+/* Supprimez ou commentez les styles de profile-icon */
+/* .profile-icon {
   width: 100px;
   height: 100px;
   background-color: #333;
@@ -144,16 +146,12 @@
   justify-content: center;
   align-items: center;
   margin-right: 1rem;
-}
-
-.profile-icon .pi-user {
-  font-size: 3rem;
-  color: white;
-}
+} */
 
 .username {
   font-size: 2.5rem;
   margin: 0;
+  text-align: center;
 }
 
 .edit-button {
@@ -788,12 +786,11 @@ h2 {
 }
 
 .modal-content {
-  background: #2a2a2a;
+  background-color: #2a2a2a;
+  border-radius: 12px;
   padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
+  width: 100%;
   max-width: 500px;
-  text-align: center;
 }
 
 h2 {
@@ -868,40 +865,42 @@ h2 {
 
 .visibility-options {
   display: flex;
-  justify-content: center;
   gap: 1rem;
-  margin-bottom: 2rem;
+  width: 100%;
+  margin-top: 1rem;
 }
 
 .visibility-btn {
-  padding: 0.8rem 2rem;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 25px;
-  background: transparent;
+  flex: 1;
+  padding: 0.8rem;
+  border: 2px solid #3a3a3a;
+  background-color: transparent;
   color: white;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .visibility-btn.active {
-  background: #ff6b6b;
+  background-color: #3a3a3a;
+  border-color: #ff6b6b;
 }
 
 .save-btn {
-  width: 200px;
+  width: 100%;
   padding: 1rem;
-  font-size: 1.2rem;
-  background: #ff6b6b;
+  background-color: #ff6b6b;
   color: white;
   border: none;
-  border-radius: 25px;
+  border-radius: 12px;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: background-color 0.3s;
+  margin-top: 2rem;
 }
 
 .save-btn:hover {
-  transform: translateY(-2px);
+  background-color: #ff8787;
 }
 .modal-overlay {
   position: fixed;
@@ -1143,5 +1142,113 @@ cite {
 @media (max-width: 768px) {
   .features-grid {
     grid-template-columns: 1fr;
+  }
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  background-color: #2a2a2a;
+  padding: 0.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.navbar-menu {
+  list-style-type: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-menu li {
+  margin-left: 1rem;
+}
+
+.navbar-menu a {
+  color: #e0e0e0;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.navbar-menu a:hover,
+.navbar-menu a.router-link-active {
+  color: #ff6b6b;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.footer {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  padding: 1rem 0;
+  margin-top: 1rem; /* Ajouté un petit espace au-dessus du footer */
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.footer-links {
+  list-style-type: none;
+  display: flex;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-left: 1rem;
+}
+
+.footer-links a {
+  color: #e0e0e0;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-links a:hover {
+  color: #ff6b6b;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-links {
+    margin-top: 1rem;
+  }
+
+  .footer-links li {
+    margin: 0 0.5rem;
   }
 }
