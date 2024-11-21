@@ -9,7 +9,9 @@
       <button class="btn primary" @click="$router.push('/game')">
         Nouvelle partie
       </button>
-      <button class="btn secondary">Voir le classement</button>
+      <button class="btn secondary" @click="$router.push('/rank')">
+        Voir le classement
+      </button>
     </div>
 
     <section class="chess-quote">
