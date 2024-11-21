@@ -7,89 +7,94 @@
         {{ error }}
       </div>
 
-      <div class="register-info">
+      <form @submit.prevent="handleRegister" class="register-info">
         <h2>Pseudo</h2>
         <div class="input-group">
           <input
-            v-model="username"
+            v-model="formData.username"
             type="text"
             class="register-input"
             placeholder="Entrez votre pseudo"
+            required
           />
         </div>
 
         <h2>Mail</h2>
         <div class="input-group">
           <input
-            v-model="email"
+            v-model="formData.email"
             type="email"
             class="register-input"
             placeholder="Entrez votre email"
+            required
           />
         </div>
 
-        <h2>Mots de Passe</h2>
+        <h2>Mot de passe</h2>
         <div class="input-group">
           <input
-            v-model="password"
+            v-model="formData.password"
             type="password"
             class="register-input"
             placeholder="Entrez votre mot de passe"
+            required
+            minlength="6"
           />
         </div>
 
-        <h2>Confirmation de Mots de Passe</h2>
+        <h2>Confirmation du mot de passe</h2>
         <div class="input-group">
           <input
-            v-model="confirmPassword"
+            v-model="formData.confirmPassword"
             type="password"
             class="register-input"
             placeholder="Confirmez votre mot de passe"
+            required
           />
         </div>
-      </div>
 
-      <button class="btn-register" @click="handleRegister">S'inscrire</button>
+        <button type="submit" class="btn-register" :disabled="isLoading">
+          {{ isLoading ? "Inscription en cours..." : "S'inscrire" }}
+        </button>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import axiosInstance from "@/utils/axios";
+import { useUserService } from "@/composables/user/userService";
+import type { UserRegistration } from "@/types/user";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const username = ref("");
-const email = ref("");
-const password = ref("");
-const confirmPassword = ref("");
-const error = ref("");
+const { register, error, isLoading } = useUserService();
+
+const formData = ref<UserRegistration>({
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+});
 
 const handleRegister = async () => {
   try {
-    if (password.value !== confirmPassword.value) {
-      error.value = "Les mots de passe ne correspondent pas";
-      return;
-    }
-
-    const response = await axiosInstance.post("/auth/register", {
-      username: username.value,
-      email: email.value,
-      password: password.value,
-    });
-
-    if (response.status === 200) {
-      router.push("/login");
-    }
-  } catch (err: any) {
-    console.error("Erreur détaillée:", err);
-    error.value = err.response?.data?.message || "Erreur lors de l'inscription";
+    await register(formData.value);
+    router.push("/login");
+  } catch (err) {
+    // L'erreur est déjà gérée dans le service
+    console.error("Erreur d'inscription:", err);
   }
 };
 </script>
 
 <style scoped>
+.btn-register:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .error-message {
   color: #ff4444;
   text-align: center;
