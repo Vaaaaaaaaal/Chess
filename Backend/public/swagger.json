@@ -770,6 +770,45 @@
 					}
 				}
 			}
+		},
+		"/auth/verify": {
+			"get": {
+				"operationId": "VerifyToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"userId": {
+											"type": "number",
+											"format": "double"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"userId",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
 		}
 	},
 	"servers": [
