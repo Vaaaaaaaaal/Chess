@@ -15,6 +15,7 @@
             type="email"
             class="login-input"
             placeholder="Entrez votre email"
+            :disabled="isLoading"
           />
         </div>
 
@@ -25,11 +26,14 @@
             type="password"
             class="login-input"
             placeholder="Entrez votre mot de passe"
+            :disabled="isLoading"
           />
         </div>
       </div>
 
-      <button class="btn-login" @click="handleLogin">Se connecter</button>
+      <button class="btn-login" @click="handleLogin" :disabled="isLoading">
+        {{ isLoading ? "Connexion..." : "Se connecter" }}
+      </button>
 
       <div class="register-link">
         Pas encore de compte ?
@@ -40,28 +44,19 @@
 </template>
 
 <script setup lang="ts">
+import { useAuth } from "@/composables/auth/useAuth";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 
-const router = useRouter();
-const store = useStore();
+const { login, error, isLoading } = useAuth();
 
 const email = ref("");
 const password = ref("");
-const error = ref("");
 
 const handleLogin = async () => {
   try {
-    await store.dispatch("auth/login", {
-      email: email.value,
-      password: password.value,
-    });
-
-    // Si la connexion réussit, on redirige vers la page d'accueil
-    router.push("/");
-  } catch (err: any) {
-    error.value = err.response?.data?.message || "Erreur lors de la connexion";
+    await login(email.value, password.value);
+  } catch (err) {
+    console.error("Erreur de connexion:", err);
   }
 };
 </script>
