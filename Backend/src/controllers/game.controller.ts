@@ -1,84 +1,37 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Path,
-  Post,
-  Request,
-  Route,
-  Security,
-  Tags,
-} from "tsoa";
+import { Body, Controller, Post, Route, Security, Tags } from "tsoa";
 import { CreateGameDto, GameResponse } from "../dto/game.dto";
 import GameService from "../services/game.service";
 
 @Route("games")
-@Tags("Game")
+@Tags("Games")
 export class GameController extends Controller {
+  @Post("/")
   @Security("jwt")
-  @Post()
   public async createGame(
-    @Body() createGameDto: CreateGameDto,
-    @Request() request: any
+    @Body() createGameDto: CreateGameDto
   ): Promise<GameResponse> {
     try {
-      console.log("User ID from token:", request.user.id);
-      console.log("Create game DTO:", createGameDto);
+      // @ts-ignore - L'utilisateur est ajouté par le middleware d'authentification
+      const userId = this.request?.user?.id;
+      const game = await GameService.createGame(userId, createGameDto);
+      const gameState = JSON.parse(game.game_state);
 
-      const game = await GameService.createGame({
-        ...createGameDto,
-        player1_id: request.user.id,
-      });
-
-      return this.mapGameToResponse(game);
-    } catch (error) {
-      console.error("Game creation error:", error);
+      return {
+        id: game.id,
+        player1_id: game.player1_id,
+        player2_id: game.player2_id,
+        guest_username: gameState.guest_username,
+        status: game.status,
+        is_public: game.is_public,
+        current_turn: game.current_turn,
+        starter: gameState.starter,
+        created_at: game.created_at,
+      };
+    } catch (error: any) {
       this.setStatus(400);
-      throw error;
+      throw new Error(
+        error.message || "Erreur lors de la création de la partie"
+      );
     }
-  }
-
-  @Get("{id}")
-  public async getGame(@Path() id: number): Promise<GameResponse> {
-    const game = await GameService.getGame(id);
-    if (!game) {
-      this.setStatus(404);
-      throw new Error("Partie non trouvée");
-    }
-    return this.mapGameToResponse(game);
-  }
-
-  @Security("jwt")
-  @Get()
-  public async getAllGames(): Promise<GameResponse[]> {
-    const games = await GameService.getPublicGames();
-    return games.map(this.mapGameToResponse);
-  }
-
-  @Get("public")
-  public async getPublicGames(): Promise<GameResponse[]> {
-    const games = await GameService.getPublicGames();
-    return games.map(this.mapGameToResponse);
-  }
-
-  @Security("jwt")
-  @Get("my")
-  public async getMyGames(@Request() request: any): Promise<GameResponse[]> {
-    const games = await GameService.getGamesByPlayer(request.user.id);
-    return games.map(this.mapGameToResponse);
-  }
-
-  private mapGameToResponse(game: any): GameResponse {
-    return {
-      id: game.id,
-      player1_id: game.player1_id,
-      username2: game.player2?.username || game.username2,
-      winner_id: game.winner_id,
-      is_public: game.is_public,
-      status: game.status,
-      game_state: game.game_state,
-      created_at: game.created_at,
-      updated_at: game.updated_at,
-    };
   }
 }

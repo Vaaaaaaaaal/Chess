@@ -1,29 +1,17 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
-
-export class CreateGameDto {
-  @IsNumber()
-  player1_id!: number;
-
-  @IsString()
-  @IsOptional()
-  username2?: string;
-
-  @IsString()
-  initialState!: string;
-
-  @IsBoolean()
-  @IsOptional()
-  is_public?: boolean = false;
+export interface CreateGameDto {
+  is_public: boolean;
+  guest_username: string;
+  starter: boolean;
 }
 
 export interface GameResponse {
   id: number;
   player1_id: number;
-  username2?: string;
-  winner_id?: number;
+  player2_id?: number | null;
+  guest_username: string;
+  status: "pending" | "active" | "completed" | "abandoned";
   is_public: boolean;
-  status: string;
-  game_state: string;
+  current_turn: number;
+  starter: boolean;
   created_at: Date;
-  updated_at: Date;
 }

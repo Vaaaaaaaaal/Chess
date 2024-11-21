@@ -60,7 +60,14 @@ Game.init(
     },
     game_state: {
       type: DataTypes.TEXT,
-      allowNull: false, // État du plateau en JSON
+      allowNull: false,
+      get() {
+        const rawValue = this.getDataValue("game_state");
+        return rawValue ? JSON.parse(rawValue) : null;
+      },
+      set(value) {
+        this.setDataValue("game_state", JSON.stringify(value));
+      },
     },
     created_at: {
       type: DataTypes.DATE,
