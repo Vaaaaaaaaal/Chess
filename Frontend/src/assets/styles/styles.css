@@ -626,7 +626,7 @@ h2 {
   color: black;
   padding: 10px 20px;
   margin: 0;
-  width: 100vw;
+  width: 95%;
   text-align: center;
 }
 
@@ -1250,5 +1250,61 @@ body {
 
   .footer-links li {
     margin: 0 0.5rem;
+  }
+}
+
+.not-found {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1e1e1e;
+  color: white;
+  padding: 2rem;
+}
+
+.not-found-content {
+  text-align: center;
+  max-width: 600px;
+}
+
+.not-found h1 {
+  font-size: 8rem;
+  margin: 0;
+  color: #ff6b6b;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+}
+
+.error-message {
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+.sub-message {
+  color: #9e9e9e;
+  margin-bottom: 2rem;
+}
+
+.home-button {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: #ff6b6b;
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: background-color 0.3s;
+}
+
+.home-button:hover {
+  background-color: #ff8787;
+}
+
+@media (max-width: 768px) {
+  .not-found h1 {
+    font-size: 6rem;
+  }
+
+  .error-message {
+    font-size: 1.5rem;
   }
 }

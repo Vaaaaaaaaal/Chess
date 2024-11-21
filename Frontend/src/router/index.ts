@@ -1,26 +1,12 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import { authGuard } from "./guards";
 
-const routes: Array<RouteRecordRaw> = [
+const routes = [
   {
     path: "/",
     name: "home",
     component: HomeView,
-  },
-  {
-    path: "/game",
-    name: "game",
-    component: () => import("../views/GameView.vue"),
-  },
-  {
-    path: "/profile/edit",
-    name: "editProfile",
-    component: () => import("../views/EditProfileView.vue"),
-  },
-  {
-    path: "/register",
-    name: "register",
-    component: () => import("../views/RegisterView.vue"),
   },
   {
     path: "/login",
@@ -28,19 +14,20 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/LoginView.vue"),
   },
   {
-    path: "/rank",
-    name: "rank",
-    component: () => import("../views/RankView.vue"),
+    path: "/register",
+    name: "register",
+    component: () => import("../views/RegisterView.vue"),
   },
   {
-    path: "/profile",
-    name: "profile",
-    component: () => import("../views/ProfileDetailView.vue"),
+    path: "/game",
+    name: "game",
+    component: () => import("../views/GameView.vue"),
   },
+  // ... autres routes ...
   {
-    path: "/game/replay/:id",
-    name: "game-replay",
-    component: () => import("../views/GameReplayView.vue"),
+    path: "/:pathMatch(.*)*",
+    name: "not-found",
+    component: () => import("../views/NotFoundView.vue"),
   },
 ];
 
@@ -48,5 +35,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+router.beforeEach(authGuard);
 
 export default router;

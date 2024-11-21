@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
@@ -26,6 +27,18 @@ const options = {
   },
   apis: ["./src/routes/*.ts"], // Chemin vers vos fichiers contenant les commentaires Swagger
 };
+
+// Configuration CORS
+app.use(
+  cors({
+    origin: "http://localhost:5173", // URL de votre frontend Vue
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
+app.use(express.json());
 app.use(express.static("public"));
 app.use(
   "/docs",
@@ -36,8 +49,6 @@ app.use(
     },
   })
 );
-
-app.use(express.json());
 
 /**
  * @swagger

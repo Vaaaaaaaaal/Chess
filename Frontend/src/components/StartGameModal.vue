@@ -6,7 +6,7 @@
 
         <div class="players-section">
           <div class="player-card">
-            <span class="player-name">ValGX</span>
+            <span class="player-name">{{ currentUsername }}</span>
           </div>
 
           <span class="vs">VS</span>
@@ -26,10 +26,10 @@
           <h3>Premier joueur</h3>
           <div class="starter-buttons">
             <button
-              :class="['starter-btn', { active: starter === 'ValGX' }]"
-              @click="starter = 'ValGX'"
+              :class="['starter-btn', { active: starter === currentUsername }]"
+              @click="starter = currentUsername"
             >
-              ValGX
+              {{ currentUsername }}
             </button>
             <button
               v-if="player2"
@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -67,18 +67,24 @@ const emit = defineEmits<{
 }>();
 
 const player2 = ref("");
-const starter = ref("ValGX");
+const currentUsername = ref("");
+const starter = ref("");
+
+onMounted(() => {
+  currentUsername.value = sessionStorage.getItem("username") || "Joueur 1";
+  starter.value = currentUsername.value;
+});
 
 const startGame = () => {
   if (player2.value) {
     emit("start", {
-      player1: "ValGX",
+      player1: currentUsername.value,
       player2: player2.value,
       starter: starter.value,
     });
     emit("update:modelValue", false);
     player2.value = "";
-    starter.value = "ValGX";
+    starter.value = currentUsername.value;
   }
 };
 </script>
