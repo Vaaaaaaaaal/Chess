@@ -19,7 +19,7 @@
 
     <footer class="footer">
       <div class="footer-content">
-        <p>&copy; 2023 ChessApp. Tous droits réservés.</p>
+        <p>&copy; 2024 ChessApp. Tous droits réservés.</p>
         <ul class="footer-links">
           <li><a href="#">Conditions d'utilisation</a></li>
           <li><a href="#">Politique de confidentialité</a></li>
@@ -95,7 +95,6 @@ body {
 
 .main-content {
   flex: 1;
-  padding: 1rem 2rem 2rem; /* Réduit le padding en bas */
 }
 
 .footer {
