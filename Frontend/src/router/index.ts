@@ -1,3 +1,4 @@
+import NotFoundView from "@/views/NotFoundView.vue";
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 
@@ -41,6 +42,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/game/replay/:id",
     name: "game-replay",
     component: () => import("../views/GameReplayView.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "not-found",
+    component: NotFoundView,
   },
 ];
 
