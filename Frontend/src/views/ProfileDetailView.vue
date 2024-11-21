@@ -2,9 +2,6 @@
   <div class="profile-detail">
     <!-- En-tête du profil -->
     <div class="profile-header">
-      <div class="profile-icon">
-        <i class="pi pi-user"></i>
-      </div>
       <h1 class="username">VALGX</h1>
       <router-link to="/profile/edit" class="edit-button">
         <i class="pi pi-pencil"></i>
