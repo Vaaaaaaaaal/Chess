@@ -1,20 +1,11 @@
-import path from "path";
 import { Sequelize } from "sequelize";
-
-const dbPath = path.join(__dirname, "..", "..", "Database.db");
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
-  storage: dbPath,
-  logging: false,
-  pool: {
-    max: 1,
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
-  },
-  retry: {
-    max: 1,
+  storage: "./Database.db",
+  logging: (sql) => {
+    console.log("🔍 Requête SQL exécutée:");
+    console.log(sql);
   },
 });
 

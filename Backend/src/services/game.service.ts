@@ -6,19 +6,23 @@ class GameService {
     player1Id: number,
     createGameDto: CreateGameDto
   ): Promise<Game> {
-    const initialGameState = JSON.stringify({
+    const initialGameState = {
       pieces: this.getInitialPiecesPosition(),
       moves: [],
       guest_username: createGameDto.guest_username,
       starter: createGameDto.starter,
-    });
+    };
 
     const game = await Game.create({
       player1_id: player1Id,
-      is_public: createGameDto.is_public,
+      player2_id: null,
+      winner_id: null,
+      is_public: false,
       status: "pending",
-      game_state: initialGameState,
       current_turn: createGameDto.starter ? 2 : 1,
+      game_state: JSON.stringify(initialGameState),
+      created_at: new Date(),
+      updated_at: new Date(),
     });
 
     return game;

@@ -11,8 +11,8 @@ export class GameController extends Controller {
     @Body() createGameDto: CreateGameDto
   ): Promise<GameResponse> {
     try {
-      // @ts-ignore - L'utilisateur est ajouté par le middleware d'authentification
-      const userId = this.request?.user?.id;
+      const userId = 1;
+
       const game = await GameService.createGame(userId, createGameDto);
       const gameState = JSON.parse(game.game_state);
 

@@ -1,5 +1,4 @@
 export interface CreateGameDto {
-  is_public: boolean;
   guest_username: string;
   starter: boolean;
 }

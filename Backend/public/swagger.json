@@ -201,9 +201,6 @@
 			},
 			"CreateGameDto": {
 				"properties": {
-					"is_public": {
-						"type": "boolean"
-					},
 					"guest_username": {
 						"type": "string"
 					},
@@ -212,7 +209,6 @@
 					}
 				},
 				"required": [
-					"is_public",
 					"guest_username",
 					"starter"
 				],
@@ -298,7 +294,9 @@
 			"jwt": {
 				"type": "http",
 				"scheme": "bearer",
-				"bearerFormat": "JWT"
+				"bearerFormat": "JWT",
+				"in": "header",
+				"name": "Authorization"
 			}
 		}
 	},

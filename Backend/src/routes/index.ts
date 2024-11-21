@@ -95,7 +95,6 @@ const models: TsoaRoute.Models = {
     "CreateGameDto": {
         "dataType": "refObject",
         "properties": {
-            "is_public": {"dataType":"boolean","required":true},
             "guest_username": {"dataType":"string","required":true},
             "starter": {"dataType":"boolean","required":true},
         },

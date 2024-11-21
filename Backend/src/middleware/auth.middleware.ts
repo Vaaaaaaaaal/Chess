@@ -1,3 +1,4 @@
+import * as express from "express";
 import { Request } from "express";
 import jwt from "jsonwebtoken";
 
@@ -9,21 +10,24 @@ export interface AuthenticatedRequest extends Request {
 
 interface JwtPayload {
   id: number;
+  user: { username: string };
   [key: string]: any;
 }
 
 export function expressAuthentication(
-  request: AuthenticatedRequest,
+  request: express.Request,
+
   securityName: string,
   scopes?: string[]
 ): Promise<JwtPayload> {
   if (securityName === "jwt") {
-    const authHeader = request.headers["authorization"];
-    console.log("Auth header:", authHeader);
-
-    if (!authHeader) {
-      return Promise.reject(new Error("Aucun header d'autorisation"));
+    console.log("Request headers:", request);
+    if (request?.headers["authorization"] === undefined) {
+      return Promise.reject(new Error("Header d'autorisation manquant"));
     }
+
+    const authHeader = request.headers["authorization"] as string;
+    console.log("Auth header:", authHeader);
 
     const cleanedHeader = authHeader.replace(/^Bearer\s+Bearer\s+/, "Bearer ");
     const parts = cleanedHeader.split(" ");
