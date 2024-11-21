@@ -1,47 +1,54 @@
 <template>
   <div v-if="modelValue" class="modal-overlay">
     <div class="modal-content">
-      <h2>Fin de la partie 🏆</h2>
-      <div class="game-result">
-        <p class="winner">{{ winner }} a gagné !</p>
-        <div class="stats">
-          <p>Durée de la partie: {{ duration }}</p>
-          <p>Nombre de coups: {{ moves }}</p>
-        </div>
+      <div class="vs-section">
+        <span class="player">{{ props.player1 }}</span>
+        <span class="vs">VS</span>
+        <span class="player">{{ props.player2 }}</span>
       </div>
-      <div class="modal-actions">
-        <button class="btn replay" @click="replay">Nouvelle partie</button>
-        <button class="btn home" @click="goHome">Retour à l'accueil</button>
+
+      <h2 class="save-question">Comment voulez vous conserver la partie ?</h2>
+
+      <div class="visibility-options">
+        <button
+          :class="['visibility-btn', { active: visibility === 'public' }]"
+          @click="visibility = 'public'"
+        >
+          Publique
+        </button>
+        <button
+          :class="['visibility-btn', { active: visibility === 'private' }]"
+          @click="visibility = 'private'"
+        >
+          Privé
+        </button>
       </div>
+
+      <button class="save-btn" @click="saveGame">Enregistrer</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
-
-const router = useRouter();
+import { ref } from "vue";
 
 const props = defineProps<{
   modelValue: boolean;
-  winner: string;
-  duration: string;
-  moves: number;
+  player1: string;
+  player2: string;
+  // ... autres props existantes
 }>();
+
+const visibility = ref("public");
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  (e: "replay"): void;
+  (e: "save", visibility: string): void;
 }>();
 
-const replay = () => {
-  emit("replay");
+const saveGame = () => {
+  emit("save", visibility.value);
   emit("update:modelValue", false);
-};
-
-const goHome = () => {
-  emit("update:modelValue", false);
-  router.push("/");
 };
 </script>
 
@@ -109,5 +116,70 @@ h2 {
 .home {
   background: #666;
   color: white;
+}
+
+.vs-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.player {
+  font-size: 2.5rem;
+  color: white;
+  font-weight: bold;
+}
+
+.vs {
+  font-size: 2.5rem;
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.save-question {
+  color: white;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.visibility-options {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.visibility-btn {
+  padding: 0.8rem 2rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 25px;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.visibility-btn.active {
+  background: #ff6b6b;
+}
+
+.save-btn {
+  width: 200px;
+  padding: 1rem;
+  font-size: 1.2rem;
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
 }
 </style>
