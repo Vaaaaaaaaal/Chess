@@ -1,12 +1,30 @@
-import type { GameResponse, CreateGameDto } from "@/types/game.types";
-import axios from "axios";
+import type { CreateGameDto, GameResponse } from "@/types/game.types";
+import axiosInstance from "@/utils/axios";
 
 export const gameService = {
+  getInitialGameState(isSecondPlayerStarter: boolean) {
+    return {
+      pieces: this.getInitialPiecesPosition(),
+      starter: isSecondPlayerStarter,
+    };
+  },
+
+  getInitialPiecesPosition() {
+    return {
+      pieces: {},
+    };
+  },
+
   async createGame(gameData: CreateGameDto): Promise<GameResponse> {
     try {
-      const response = await axios.post<GameResponse>(
-        "http://localhost:3000/games",
-        gameData
+      const payload = {
+        username2: gameData.username2,
+        starter: gameData.starter,
+      };
+
+      const response = await axiosInstance.post<GameResponse>(
+        "/games",
+        payload
       );
       return response.data;
     } catch (error) {

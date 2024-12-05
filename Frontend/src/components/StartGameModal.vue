@@ -4,6 +4,10 @@
       <div class="modal-content">
         <h2 class="modal-title">Nouvelle Partie</h2>
 
+        <div v-if="error" class="error-message">
+          {{ error }}
+        </div>
+
         <div class="players-section">
           <div class="player-card">
             <span class="player-name">{{ currentUsername }}</span>
@@ -42,8 +46,12 @@
         </div>
 
         <div class="actions">
-          <button class="btn-start" @click="startGame" :disabled="!player2">
-            Commencer la partie
+          <button
+            class="btn-start"
+            @click="startGame"
+            :disabled="!player2 || isLoading"
+          >
+            {{ isLoading ? "Création en cours..." : "Commencer la partie" }}
           </button>
         </div>
       </div>
@@ -52,6 +60,7 @@
 </template>
 
 <script setup lang="ts">
+import { useGame } from "@/composables/game/useGame";
 import { onMounted, ref } from "vue";
 
 const props = defineProps<{
@@ -66,6 +75,7 @@ const emit = defineEmits<{
   ): void;
 }>();
 
+const { createGame, error, isLoading } = useGame();
 const player2 = ref("");
 const currentUsername = ref("");
 const starter = ref("");
@@ -75,16 +85,48 @@ onMounted(() => {
   starter.value = currentUsername.value;
 });
 
-const startGame = () => {
+const startGame = async () => {
   if (player2.value) {
-    emit("start", {
-      player1: currentUsername.value,
-      player2: player2.value,
-      starter: starter.value,
-    });
-    emit("update:modelValue", false);
-    player2.value = "";
-    starter.value = currentUsername.value;
+    try {
+      const response = await createGame({
+        username2: player2.value,
+        starter: starter.value === player2.value,
+        is_public: false,
+        game_state: {
+          pieces: {},
+          starter: starter.value === player2.value,
+        },
+      });
+
+      if (response) {
+        emit("start", {
+          player1: currentUsername.value,
+          player2: player2.value,
+          starter: starter.value,
+        });
+        emit("update:modelValue", false);
+        player2.value = "";
+        starter.value = currentUsername.value;
+      }
+    } catch (err) {
+      console.error("Erreur lors de la création de la partie:", err);
+    }
   }
 };
 </script>
+
+<style scoped>
+.error-message {
+  color: #ff4444;
+  text-align: center;
+  margin: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(255, 68, 68, 0.1);
+  border-radius: 4px;
+}
+
+.btn-start:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+</style>
