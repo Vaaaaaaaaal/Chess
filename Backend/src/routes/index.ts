@@ -54,11 +54,6 @@ const models: TsoaRoute.Models = {
         "properties": {
             "from_position": {"dataType":"string","required":true},
             "to_position": {"dataType":"string","required":true},
-            "piece_type": {"dataType":"string","required":true},
-            "captured_piece": {"dataType":"string"},
-            "is_check": {"dataType":"boolean"},
-            "is_checkmate": {"dataType":"boolean"},
-            "game_state": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -104,6 +99,24 @@ const models: TsoaRoute.Models = {
     "Record_string.any_": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Move": {
+        "dataType": "refObject",
+        "properties": {
+            "id": {"dataType":"double","required":true},
+            "game_id": {"dataType":"double","required":true},
+            "player_id": {"dataType":"double","required":true},
+            "from_position": {"dataType":"string","required":true},
+            "to_position": {"dataType":"string","required":true},
+            "piece_type": {"dataType":"string","required":true},
+            "captured_piece": {"dataType":"string"},
+            "is_check": {"dataType":"boolean","required":true},
+            "is_checkmate": {"dataType":"boolean","required":true},
+            "move_number": {"dataType":"double","required":true},
+            "created_at": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RegisterResponse": {
@@ -485,6 +498,38 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'getPossibleMoves',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/games/:gameId/move',
+            ...(fetchMiddlewares<RequestHandler>(GameController)),
+            ...(fetchMiddlewares<RequestHandler>(GameController.prototype.makeMove)),
+
+            async function GameController_makeMove(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    gameId: {"in":"path","name":"gameId","required":true,"dataType":"double"},
+                    moveDto: {"in":"body","name":"moveDto","required":true,"ref":"MoveDto"},
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new GameController();
+
+              await templateService.apiHandler({
+                methodName: 'makeMove',
                 controller,
                 response,
                 next,

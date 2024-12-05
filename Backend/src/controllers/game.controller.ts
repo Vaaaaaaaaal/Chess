@@ -11,8 +11,10 @@ import {
   Tags,
 } from "tsoa";
 import { CreateGameDto, GameResponse } from "../dto/game.dto";
+import { Move, MoveDto } from "../dto/move.dto";
 import { AuthenticatedRequest } from "../middleware/auth.middleware";
 import GameService from "../services/game.service";
+import MoveService from "../services/move.service";
 
 @Route("games")
 @Tags("Games")
@@ -118,6 +120,33 @@ export class GameController extends Controller {
       }
 
       return await GameService.getPossibleMoves(gameId, position);
+    } catch (error) {
+      this.setStatus(500);
+      throw error;
+    }
+  }
+
+  @Post("{gameId}/move")
+  @Response<{ message: string }>(400, "Mouvement invalide")
+  @Response<{ message: string }>(404, "Partie non trouvée")
+  /**
+   * @summary Effectuer un mouvement de pièce
+   */
+  public async makeMove(
+    @Path() gameId: number,
+    @Body() moveDto: MoveDto,
+    @Request() request: any
+  ): Promise<Move> {
+    try {
+      const playerId = request.user.id; // Assurez-vous d'avoir l'authentification configurée
+
+      const game = await GameService.getGameById(gameId);
+      if (!game) {
+        this.setStatus(404);
+        throw new Error("Partie non trouvée");
+      }
+
+      return await MoveService.createMove(gameId, playerId, moveDto);
     } catch (error) {
       this.setStatus(500);
       throw error;

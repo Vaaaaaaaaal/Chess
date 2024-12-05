@@ -1,3 +1,4 @@
+import type { Move as MoveInterface } from "../dto/move.dto";
 import { MoveDto } from "../dto/move.dto";
 import Game from "../models/game.model";
 import Move from "../models/move.model";
@@ -8,7 +9,7 @@ class MoveService {
     gameId: number,
     playerId: number,
     moveDto: MoveDto
-  ): Promise<Move> {
+  ): Promise<MoveInterface> {
     const game = await Game.findByPk(gameId);
     if (!game) {
       throw new Error("Partie non trouvée");
@@ -65,7 +66,7 @@ class MoveService {
     return move;
   }
 
-  async getGameMoves(gameId: number): Promise<Move[]> {
+  async getGameMoves(gameId: number): Promise<MoveInterface[]> {
     return Move.findAll({
       where: { game_id: gameId },
       order: [["move_number", "ASC"]],
