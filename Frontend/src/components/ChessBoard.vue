@@ -5,9 +5,10 @@
         v-for="col in 8"
         :key="col"
         :class="['board-cell', getCellColor(row, col)]"
+        @click="handleCellClick(row, col)"
       >
         <div v-if="getPiece(row, col)" class="piece">
-          <img :src="getPiece(row, col)" :alt="getPiece(row, col)" />
+          <img :src="getPiece(row, col)" :alt="getPieceType(row, col)" />
         </div>
       </div>
     </div>
@@ -102,5 +103,58 @@ const getPiece = (row: number, col: number): string => {
   if (row === 2) return pieces.value.black.pawn;
 
   return "";
+};
+
+const getPieceType = (row: number, col: number): string => {
+  if (row === 8) {
+    switch (col) {
+      case 1:
+      case 8:
+        return "Tour blanche";
+      case 2:
+      case 7:
+        return "Cavalier blanc";
+      case 3:
+      case 6:
+        return "Fou blanc";
+      case 4:
+        return "Reine blanche";
+      case 5:
+        return "Roi blanc";
+    }
+  }
+  if (row === 7) return "Pion blanc";
+
+  if (row === 1) {
+    switch (col) {
+      case 1:
+      case 8:
+        return "Tour noire";
+      case 2:
+      case 7:
+        return "Cavalier noir";
+      case 3:
+      case 6:
+        return "Fou noir";
+      case 4:
+        return "Reine noire";
+      case 5:
+        return "Roi noir";
+    }
+  }
+  if (row === 2) return "Pion noir";
+
+  return "";
+};
+
+const handleCellClick = (row: number, col: number) => {
+  const pieceType = getPieceType(row, col);
+  if (pieceType) {
+    console.log(
+      `Pièce sélectionnée: ${pieceType} à la position ${columns[col - 1]}${
+        9 - row
+      }`
+    );
+  }
 };
 </script>
