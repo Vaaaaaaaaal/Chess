@@ -95,6 +95,8 @@ const startGame = async () => {
       });
 
       if (response) {
+        localStorage.setItem("currentGameId", response.id.toString());
+
         emit("start", {
           player1: currentUsername.value,
           player2: player2.value,

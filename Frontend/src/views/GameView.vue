@@ -1,6 +1,17 @@
 <template>
   <div class="game-view">
-    <div class="turn-indicator">Au tour de {{ currentPlayer }}</div>
+    <div class="turn-indicator">
+      Au tour de
+      {{
+        isCurrentPlayerTurn
+          ? gameState.who_start
+            ? username
+            : players.player2
+          : gameState.who_start
+          ? players.player2
+          : username
+      }}
+    </div>
     <div class="game-container">
       <div class="game-controls">
         <button class="control-btn end-btn" @click="showEndModal = true">
@@ -27,31 +38,56 @@ import ChessBoard from "@/components/ChessBoard.vue";
 import EndGameModal from "@/components/EndGameModal.vue";
 import StartGameModal from "@/components/StartGameModal.vue";
 import { gameService } from "@/services/game.service";
-import { ref, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 
-const currentPlayer = ref("");
+const currentPlayer = ref("player1");
 const showStartModal = ref(false);
 const showEndModal = ref(false);
 const winner = ref("");
 const gameId = ref<number | null>(null);
+const username = ref("");
+const players = ref<{ player1: string; player2: string }>({
+  player1: "",
+  player2: "",
+});
+const gameState = ref<{ who_start: boolean }>({ who_start: true });
+const isCurrentPlayerTurn = computed(() => currentPlayer.value === "player1");
 
 onMounted(() => {
   showStartModal.value = true;
+  username.value = sessionStorage.getItem("username") || "Joueur 1";
+  const savedGameId = sessionStorage.getItem("currentGameId");
+  if (savedGameId) {
+    gameId.value = parseInt(savedGameId);
+  }
 });
 
-const handleGameStart = async (players: { player1: string; player2: string; starter: string }) => {
+const handleGameStart = async (playersData: {
+  player1: string;
+  player2: string;
+  starter: string;
+}) => {
+  players.value = {
+    player1: playersData.player1,
+    player2: playersData.player2,
+  };
   try {
-    const initialGameState = gameService.getInitialGameState(players.starter);
+    const initialGameState = gameService.getInitialGameState(
+      playersData.starter === playersData.player2
+    );
 
     const response = await gameService.createGame({
-      username2: players.player2,
+      username2: playersData.player2,
       is_public: false,
-      game_state: initialGameState
+      game_state: initialGameState,
+      who_start: playersData.starter === playersData.player1,
+      starter: playersData.starter === playersData.player2,
     });
-    
+
     gameId.value = response.id;
+    sessionStorage.setItem("currentGameId", response.id.toString());
     currentPlayer.value = response.game_state.starter;
-    
+    gameState.value.who_start = response.who_start;
   } catch (error) {
     console.error("Erreur lors de la création de la partie:", error);
   }
@@ -60,5 +96,6 @@ const handleGameStart = async (players: { player1: string; player2: string; star
 const handleReplay = () => {
   showStartModal.value = true;
   gameId.value = null;
+  sessionStorage.removeItem("currentGameId");
 };
 </script>

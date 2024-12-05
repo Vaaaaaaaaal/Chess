@@ -20,6 +20,11 @@ export function useGame() {
         ...gameData,
         game_state: initialGameState,
       });
+      
+      if (response && response.id) {
+        sessionStorage.setItem('currentGameId', response.id.toString());
+      }
+      
       return response;
     } catch (err: any) {
       error.value =
