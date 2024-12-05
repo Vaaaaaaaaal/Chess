@@ -14,17 +14,18 @@ export function useGame() {
 
     try {
       const initialGameState = gameService.getInitialGameState(
-        gameData.starter
+        gameData.who_start
       );
       const response = await gameService.createGame({
-        ...gameData,
-        game_state: initialGameState,
+        username2: gameData.username2,
+        who_start: gameData.who_start,
+        game_state: JSON.stringify(initialGameState),
       });
-      
+
       if (response && response.id) {
-        sessionStorage.setItem('currentGameId', response.id.toString());
+        sessionStorage.setItem("currentGameId", response.id.toString());
       }
-      
+
       return response;
     } catch (err: any) {
       error.value =
