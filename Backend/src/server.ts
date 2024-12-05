@@ -5,6 +5,7 @@ import swaggerUi from "swagger-ui-express";
 import db from "./config/database";
 import { expressAuthentication } from "./middleware/auth.middleware";
 import { RegisterRoutes } from "./routes";
+import initDatabase from "./config/initDatabase";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -79,40 +80,24 @@ app.get("/", (req, res) => {
 
 RegisterRoutes(app);
 
-async function initDb() {
-  try {
-    await db.sync({
-      force: true,
-      logging: false,
-    });
-    console.log("✅ Base de données synchronisée avec succès");
-  } catch (error) {
-    console.error(
-      "❌ Erreur lors de la synchronisation de la base de données:",
-      error
-    );
-    throw error;
-  }
-}
-
 async function startServer() {
   try {
     await db.authenticate();
     console.log("✅ Connexion à la base de données établie avec succès.");
 
-    // Initialiser/synchroniser la base de données
-    await initDb();
+    // Ne pas forcer la synchronisation
+    await db.sync({ alter: false });
+    console.log("✅ Base de données synchronisée avec succès");
 
     app.listen(port, () => {
       console.log(`🚀 Serveur en cours d'exécution sur le port ${port}`);
     });
   } catch (error) {
     console.error("❌ Erreur serveur:", error);
-    // En cas d'erreur, fermer proprement la connexion
-    await db.close();
+    process.exit(1); // Arrête complètement le processus en cas d'erreur
   }
 }
 
 startServer();
 
-export default initDb;
+export default initDatabase;

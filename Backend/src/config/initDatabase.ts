@@ -2,7 +2,7 @@ import sequelize from "./database";
 
 async function initDatabase() {
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ alter: true });
     console.log("✅ Base de données synchronisée avec succès");
   } catch (error) {
     console.error(

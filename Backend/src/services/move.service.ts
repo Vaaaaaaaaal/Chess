@@ -13,13 +13,6 @@ class MoveService {
       throw new Error("Partie non trouvée");
     }
 
-    const isPlayer1 = game.player1_id === playerId;
-    const isPlayer2 = game.player2_id === playerId;
-
-    if (!isPlayer1 && !isPlayer2) {
-      throw new Error("Vous n'êtes pas un joueur de cette partie");
-    }
-
     const moveCount = await Move.count({ where: { game_id: gameId } });
 
     const move = await Move.create({
