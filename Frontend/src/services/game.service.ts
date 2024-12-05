@@ -20,12 +20,10 @@ export const gameService = {
       const payload = {
         username2: gameData.username2,
         starter: gameData.starter,
+        who_start: gameData.who_start,
       };
 
-      const response = await axiosInstance.post<GameResponse>(
-        "/games",
-        payload
-      );
+      const response = await axiosInstance.post<GameResponse>("/games", payload);
       return response.data;
     } catch (error) {
       console.error("Erreur lors de la création de la partie:", error);

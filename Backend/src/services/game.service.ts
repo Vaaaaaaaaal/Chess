@@ -12,7 +12,8 @@ class GameService {
       winner_id: null,
       is_public: true,
       game_state: "en_cours",
-      created_at: new Date()
+      created_at: new Date(),
+      who_start: createGameDto.who_start,
     });
 
     return game;

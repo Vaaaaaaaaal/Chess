@@ -28,6 +28,7 @@ export class GameController extends Controller {
         is_public: game.is_public,
         game_state: game.game_state,
         created_at: game.created_at,
+        who_start: game.who_start,
       };
     } catch (error: any) {
       this.setStatus(error.status || 400);

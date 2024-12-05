@@ -158,7 +158,8 @@
 						"type": "string"
 					},
 					"winner_id": {
-						"type": "boolean",
+						"type": "number",
+						"format": "double",
 						"nullable": true
 					},
 					"is_public": {
@@ -168,8 +169,9 @@
 						"type": "string",
 						"format": "date-time"
 					},
-					"game_state": {
-						"type": "string"
+					"game_state": {},
+					"who_start": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -179,7 +181,8 @@
 					"winner_id",
 					"is_public",
 					"created_at",
-					"game_state"
+					"game_state",
+					"who_start"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -191,11 +194,15 @@
 					},
 					"starter": {
 						"type": "boolean"
+					},
+					"who_start": {
+						"type": "boolean"
 					}
 				},
 				"required": [
 					"username2",
-					"starter"
+					"starter",
+					"who_start"
 				],
 				"type": "object",
 				"additionalProperties": false

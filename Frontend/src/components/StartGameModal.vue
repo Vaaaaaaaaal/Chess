@@ -91,11 +91,7 @@ const startGame = async () => {
       const response = await createGame({
         username2: player2.value,
         starter: starter.value === player2.value,
-        is_public: false,
-        game_state: {
-          pieces: {},
-          starter: starter.value === player2.value,
-        },
+        who_start: starter.value === currentUsername.value,
       });
 
       if (response) {

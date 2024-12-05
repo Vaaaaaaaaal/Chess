@@ -1,14 +1,15 @@
 import { DataTypes, Model } from "sequelize";
-import sequelize from "../config/database";
+import db from "../config/database";
 
 class Game extends Model {
   public id!: number;
   public player1_id!: number;
   public username2!: string;
-  public winner_id!: boolean | null;
+  public winner_id!: number | null;
   public is_public!: boolean;
   public game_state!: string;
   public created_at!: Date;
+  public who_start!: boolean;
 }
 
 Game.init(
@@ -23,36 +24,32 @@ Game.init(
       allowNull: false,
     },
     username2: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING,
       allowNull: false,
     },
     winner_id: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     is_public: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: true,
     },
     game_state: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-      get() {
-        const rawValue = this.getDataValue("game_state");
-        return rawValue ? JSON.parse(rawValue) : null;
-      },
-      set(value) {
-        this.setDataValue("game_state", JSON.stringify(value));
-      },
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     created_at: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      allowNull: false,
+    },
+    who_start: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
     },
   },
   {
-    sequelize,
-    modelName: "Game",
+    sequelize: db,
     tableName: "games",
     timestamps: false,
   }
