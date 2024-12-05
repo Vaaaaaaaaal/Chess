@@ -19,14 +19,29 @@ export const gameService = {
     try {
       const payload = {
         username2: gameData.username2,
-        starter: gameData.starter,
         who_start: gameData.who_start,
+        game_state: JSON.stringify(gameData.game_state),
       };
 
-      const response = await axiosInstance.post<GameResponse>("/games", payload);
+      const response = await axiosInstance.post<GameResponse>(
+        "/games",
+        payload
+      );
       return response.data;
     } catch (error) {
       console.error("Erreur lors de la création de la partie:", error);
+      throw error;
+    }
+  },
+
+  async getGame(gameId: number): Promise<GameResponse> {
+    try {
+      const response = await axiosInstance.get<GameResponse>(
+        `/games/${gameId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la récupération de la partie:", error);
       throw error;
     }
   },

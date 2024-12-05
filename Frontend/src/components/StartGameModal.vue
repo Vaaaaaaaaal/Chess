@@ -88,19 +88,23 @@ onMounted(() => {
 const startGame = async () => {
   if (player2.value) {
     try {
+      console.log("Démarrage de la création de partie");
+      
       const response = await createGame({
         username2: player2.value,
-        starter: starter.value === player2.value,
         who_start: starter.value === currentUsername.value,
+        game_state: JSON.stringify({
+          pieces: {},
+          starter: starter.value === player2.value
+        })
       });
 
       if (response) {
-        localStorage.setItem("currentGameId", response.id.toString());
-
+        console.log("Partie créée avec succès");
         emit("start", {
           player1: currentUsername.value,
           player2: player2.value,
-          starter: starter.value,
+          starter: starter.value
         });
         emit("update:modelValue", false);
         player2.value = "";

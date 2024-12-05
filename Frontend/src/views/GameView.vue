@@ -2,15 +2,7 @@
   <div class="game-view">
     <div class="turn-indicator">
       Au tour de
-      {{
-        isCurrentPlayerTurn
-          ? gameState.who_start
-            ? username
-            : players.player2
-          : gameState.who_start
-          ? players.player2
-          : username
-      }}
+      {{ currentTurnPlayer }}
     </div>
     <div class="game-container">
       <div class="game-controls">
@@ -53,12 +45,28 @@ const players = ref<{ player1: string; player2: string }>({
 const gameState = ref<{ who_start: boolean }>({ who_start: true });
 const isCurrentPlayerTurn = computed(() => currentPlayer.value === "player1");
 
-onMounted(() => {
+const currentTurnPlayer = computed(() => {
+  return gameState.value.who_start ? username.value : players.value.player2;
+});
+
+const fetchGameData = async (gameId: number) => {
+  try {
+    const response = await gameService.getGame(gameId);
+    if (response) {
+      gameState.value.who_start = response.who_start;
+      players.value.player2 = response.username2;
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération de la partie:", error);
+  }
+};
+
+onMounted(async () => {
   showStartModal.value = true;
   username.value = sessionStorage.getItem("username") || "Joueur 1";
   const savedGameId = sessionStorage.getItem("currentGameId");
   if (savedGameId) {
-    gameId.value = parseInt(savedGameId);
+    await fetchGameData(parseInt(savedGameId));
   }
 });
 
