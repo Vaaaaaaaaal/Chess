@@ -33,4 +33,16 @@ export const gameService = {
       throw error;
     }
   },
+
+  async getGame(gameId: number): Promise<GameResponse> {
+    try {
+      const response = await axiosInstance.get<GameResponse>(
+        `/games/${gameId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de la récupération de la partie:", error);
+      throw error;
+    }
+  },
 };
