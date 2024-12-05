@@ -18,7 +18,7 @@
     </div>
 
     <div class="row-labels">
-      <span v-for="row in 8" :key="row">{{ row }}</span>
+      <span v-for="row in 8" :key="row">{{ 9 - row }}</span>
     </div>
   </div>
 </template>
