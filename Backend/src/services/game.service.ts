@@ -7,27 +7,26 @@ class GameService {
     createGameDto: CreateGameDto
   ): Promise<Game> {
     const initialGameState = {
-      board: this.getInitialBoardState(),
+      board: {
+        pieces: {
+          a1: { type: "rook", color: "white" },
+          b1: { type: "knight", color: "white" }
+        }
+      },
       currentTurn: player1_id,
       starter: createGameDto.starter
     };
 
-    return await Game.create({
+    const game = await Game.create({
       player1_id,
       username2: createGameDto.username2,
-      game_state: JSON.stringify(initialGameState),
       winner_id: null,
+      is_public: true,
+      game_state: JSON.stringify(initialGameState),
+      created_at: new Date()
     });
-  }
 
-  private getInitialBoardState() {
-    return {
-      pieces: {
-        a1: { type: "rook", color: "white" },
-        b1: { type: "knight", color: "white" },
-        // ... autres pièces initiales
-      },
-    };
+    return game;
   }
 }
 
