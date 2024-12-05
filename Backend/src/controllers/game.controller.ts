@@ -5,6 +5,7 @@ import {
   Path,
   Post,
   Request,
+  Response,
   Route,
   Security,
   Tags,
@@ -73,6 +74,53 @@ export class GameController extends Controller {
       throw new Error(
         error.message || "Erreur lors de la récupération de la partie"
       );
+    }
+  }
+
+  @Get("cache/status")
+  public async getCacheStatus() {
+    try {
+      const cacheContent = await GameService.getCacheContent();
+      const cacheStats = await GameService.getCacheStats();
+
+      return {
+        content: cacheContent,
+        stats: cacheStats,
+      };
+    } catch (error) {
+      this.setStatus(500);
+      throw new Error("Erreur lors de la récupération du cache");
+    }
+  }
+
+  @Get("{gameId}/possible-moves/{position}")
+  @Response<{ message: string }>(400, "Position invalide")
+  @Response<{ message: string }>(404, "Partie non trouvée")
+  /**
+   * @summary Obtenir les mouvements possibles pour une pièce
+   * @param gameId ID de la partie
+   * @param position Position de la pièce (ex: 'e2')
+   */
+  public async getPossibleMoves(
+    @Path() gameId: number,
+    @Path() position: string
+  ): Promise<string[]> {
+    try {
+      const game = await GameService.getGameById(gameId);
+      if (!game) {
+        this.setStatus(404);
+        throw new Error("Partie non trouvée");
+      }
+
+      if (!/^[a-h][1-8]$/.test(position)) {
+        this.setStatus(400);
+        throw new Error("Position invalide");
+      }
+
+      return await GameService.getPossibleMoves(gameId, position);
+    } catch (error) {
+      this.setStatus(500);
+      throw error;
     }
   }
 }
