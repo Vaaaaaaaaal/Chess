@@ -62,11 +62,13 @@ const fetchGameData = async (gameId: number) => {
 };
 
 onMounted(async () => {
-  showStartModal.value = true;
   username.value = sessionStorage.getItem("username") || "Joueur 1";
   const savedGameId = sessionStorage.getItem("currentGameId");
+  
   if (savedGameId) {
     await fetchGameData(parseInt(savedGameId));
+  } else {
+    showStartModal.value = true;
   }
 });
 
