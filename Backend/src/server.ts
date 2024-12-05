@@ -3,6 +3,7 @@ import express from "express";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 import db from "./config/database";
+import { expressAuthentication } from "./middleware/auth.middleware";
 import { RegisterRoutes } from "./routes";
 
 const app = express();
@@ -50,6 +51,19 @@ app.use(
   })
 );
 
+// Ajout du middleware d'authentification global
+app.use((req, res, next) => {
+  if (req.headers.authorization) {
+    expressAuthentication(req, "jwt", [])
+      .then(() => next())
+      .catch((error) => {
+        res.status(401).json({ message: error.message });
+      });
+  } else {
+    next();
+  }
+});
+
 /**
  * @swagger
  * /:
@@ -68,8 +82,7 @@ RegisterRoutes(app);
 async function initDb() {
   try {
     await db.sync({
-      force: false,
-      alter: false,
+      force: true,
       logging: false,
     });
     console.log("✅ Base de données synchronisée avec succès");

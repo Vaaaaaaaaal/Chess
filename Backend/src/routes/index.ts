@@ -81,13 +81,11 @@ const models: TsoaRoute.Models = {
         "properties": {
             "id": {"dataType":"double","required":true},
             "player1_id": {"dataType":"double","required":true},
-            "player2_id": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]},
-            "guest_username": {"dataType":"string","required":true},
-            "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["pending"]},{"dataType":"enum","enums":["active"]},{"dataType":"enum","enums":["completed"]},{"dataType":"enum","enums":["abandoned"]}],"required":true},
+            "username2": {"dataType":"string","required":true},
+            "winner_id": {"dataType":"union","subSchemas":[{"dataType":"boolean"},{"dataType":"enum","enums":[null]}],"required":true},
             "is_public": {"dataType":"boolean","required":true},
-            "current_turn": {"dataType":"double","required":true},
-            "starter": {"dataType":"boolean","required":true},
             "created_at": {"dataType":"datetime","required":true},
+            "game_state": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -95,7 +93,7 @@ const models: TsoaRoute.Models = {
     "CreateGameDto": {
         "dataType": "refObject",
         "properties": {
-            "guest_username": {"dataType":"string","required":true},
+            "username2": {"dataType":"string","required":true},
             "starter": {"dataType":"boolean","required":true},
         },
         "additionalProperties": false,
@@ -376,6 +374,7 @@ export function RegisterRoutes(app: Router) {
 
             async function GameController_createGame(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"request","name":"request","required":true,"dataType":"object"},
                     createGameDto: {"in":"body","name":"createGameDto","required":true,"ref":"CreateGameDto"},
             };
 

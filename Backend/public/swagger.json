@@ -154,54 +154,39 @@
 						"type": "number",
 						"format": "double"
 					},
-					"player2_id": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"guest_username": {
+					"username2": {
 						"type": "string"
 					},
-					"status": {
-						"type": "string",
-						"enum": [
-							"pending",
-							"active",
-							"completed",
-							"abandoned"
-						]
+					"winner_id": {
+						"type": "boolean",
+						"nullable": true
 					},
 					"is_public": {
-						"type": "boolean"
-					},
-					"current_turn": {
-						"type": "number",
-						"format": "double"
-					},
-					"starter": {
 						"type": "boolean"
 					},
 					"created_at": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"game_state": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"id",
 					"player1_id",
-					"guest_username",
-					"status",
+					"username2",
+					"winner_id",
 					"is_public",
-					"current_turn",
-					"starter",
-					"created_at"
+					"created_at",
+					"game_state"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
 			"CreateGameDto": {
 				"properties": {
-					"guest_username": {
+					"username2": {
 						"type": "string"
 					},
 					"starter": {
@@ -209,7 +194,7 @@
 					}
 				},
 				"required": [
-					"guest_username",
+					"username2",
 					"starter"
 				],
 				"type": "object",
