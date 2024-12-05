@@ -18,6 +18,10 @@ class GameService {
 
     return game;
   }
+
+  async getGameById(id: number): Promise<Game | null> {
+    return Game.findByPk(id);
+  }
 }
 
 export default new GameService();

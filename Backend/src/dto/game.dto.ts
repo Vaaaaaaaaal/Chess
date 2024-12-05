@@ -1,6 +1,5 @@
 export interface CreateGameDto {
   username2: string;
-  starter: boolean;
   who_start: boolean;
   game_state?: string;
 }

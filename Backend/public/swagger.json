@@ -192,16 +192,15 @@
 					"username2": {
 						"type": "string"
 					},
-					"starter": {
-						"type": "boolean"
-					},
 					"who_start": {
 						"type": "boolean"
+					},
+					"game_state": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"username2",
-					"starter",
 					"who_start"
 				],
 				"type": "object",
@@ -586,6 +585,38 @@
 						}
 					}
 				}
+			}
+		},
+		"/games/{id}": {
+			"get": {
+				"operationId": "GetGame",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GameResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		},
 		"/auth/register": {
