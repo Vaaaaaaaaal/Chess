@@ -3,9 +3,6 @@
     <div class="turn-indicator">Au tour de {{ currentPlayer }}</div>
     <div class="game-container">
       <div class="game-controls">
-        <button class="control-btn start-btn" @click="showStartModal = true">
-          Start
-        </button>
         <button class="control-btn end-btn" @click="showEndModal = true">
           End
         </button>
@@ -29,20 +26,39 @@
 import ChessBoard from "@/components/ChessBoard.vue";
 import EndGameModal from "@/components/EndGameModal.vue";
 import StartGameModal from "@/components/StartGameModal.vue";
-import { ref } from "vue";
+import { gameService } from "@/services/game.service";
+import { ref, onMounted } from "vue";
 
-const currentPlayer = ref("ValentinBG47");
+const currentPlayer = ref("");
 const showStartModal = ref(false);
 const showEndModal = ref(false);
-const winner = ref("ValentinBG47");
+const winner = ref("");
+const gameId = ref<number | null>(null);
 
-const handleGameStart = (players: { player1: string; player2: string }) => {
-  currentPlayer.value = players.player1;
-  // Logique pour démarrer la partie
+onMounted(() => {
+  showStartModal.value = true;
+});
+
+const handleGameStart = async (players: { player1: string; player2: string; starter: string }) => {
+  try {
+    const initialGameState = gameService.getInitialGameState(players.starter);
+
+    const response = await gameService.createGame({
+      username2: players.player2,
+      is_public: false,
+      game_state: initialGameState
+    });
+    
+    gameId.value = response.id;
+    currentPlayer.value = response.game_state.starter;
+    
+  } catch (error) {
+    console.error("Erreur lors de la création de la partie:", error);
+  }
 };
 
 const handleReplay = () => {
   showStartModal.value = true;
-  // Logique pour réinitialiser le jeu
+  gameId.value = null;
 };
 </script>
