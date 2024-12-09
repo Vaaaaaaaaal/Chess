@@ -80,28 +80,11 @@
 					},
 					"to_position": {
 						"type": "string"
-					},
-					"piece_type": {
-						"type": "string"
-					},
-					"captured_piece": {
-						"type": "string"
-					},
-					"is_check": {
-						"type": "boolean"
-					},
-					"is_checkmate": {
-						"type": "boolean"
-					},
-					"game_state": {
-						"type": "string"
 					}
 				},
 				"required": [
 					"from_position",
-					"to_position",
-					"piece_type",
-					"game_state"
+					"to_position"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -202,6 +185,67 @@
 				"required": [
 					"username2",
 					"who_start"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Record_string.any_": {
+				"properties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"Move": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"game_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"player_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"from_position": {
+						"type": "string"
+					},
+					"to_position": {
+						"type": "string"
+					},
+					"piece_type": {
+						"type": "string"
+					},
+					"captured_piece": {
+						"type": "string"
+					},
+					"is_check": {
+						"type": "boolean"
+					},
+					"is_checkmate": {
+						"type": "boolean"
+					},
+					"move_number": {
+						"type": "number",
+						"format": "double"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"game_id",
+					"player_id",
+					"from_position",
+					"to_position",
+					"piece_type",
+					"is_check",
+					"is_checkmate",
+					"move_number",
+					"created_at"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -617,6 +661,225 @@
 						}
 					}
 				]
+			}
+		},
+		"/games/cache/status": {
+			"get": {
+				"operationId": "GetCacheStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"stats": {
+											"properties": {
+												"ttl": {
+													"type": "number",
+													"format": "double"
+												},
+												"misses": {
+													"type": "number",
+													"format": "double"
+												},
+												"hits": {
+													"type": "number",
+													"format": "double"
+												},
+												"keys": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"ttl",
+												"misses",
+												"hits",
+												"keys"
+											],
+											"type": "object"
+										},
+										"content": {
+											"$ref": "#/components/schemas/Record_string.any_"
+										}
+									},
+									"required": [
+										"stats",
+										"content"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/games/{gameId}/possible-moves/{position}": {
+			"get": {
+				"operationId": "GetPossibleMoves",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"type": "string"
+									},
+									"type": "array"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Position invalide",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Partie non trouvée",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "gameId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "path",
+						"name": "position",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/games/{gameId}/move": {
+			"post": {
+				"operationId": "MakeMove",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Move"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Mouvement invalide",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Partie non trouvée",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "gameId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MoveDto"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/auth/register": {

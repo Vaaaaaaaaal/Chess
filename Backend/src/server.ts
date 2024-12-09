@@ -3,9 +3,9 @@ import express from "express";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 import db from "./config/database";
+import initDatabase from "./config/initDatabase";
 import { expressAuthentication } from "./middleware/auth.middleware";
 import { RegisterRoutes } from "./routes";
-import initDatabase from "./config/initDatabase";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -53,13 +53,14 @@ app.use(
 );
 
 // Ajout du middleware d'authentification global
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   if (req.headers.authorization) {
-    expressAuthentication(req, "jwt", [])
-      .then(() => next())
-      .catch((error) => {
-        res.status(401).json({ message: error.message });
-      });
+    try {
+      await expressAuthentication(req, "jwt", []);
+      next();
+    } catch (error) {
+      res.status(401).json({ message: "Token invalide" });
+    }
   } else {
     next();
   }
