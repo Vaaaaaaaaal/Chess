@@ -127,6 +127,7 @@ export class GameController extends Controller {
   }
 
   @Post("{gameId}/move")
+  @Security("jwt")
   @Response<{ message: string }>(400, "Mouvement invalide")
   @Response<{ message: string }>(404, "Partie non trouvée")
   /**
@@ -135,10 +136,14 @@ export class GameController extends Controller {
   public async makeMove(
     @Path() gameId: number,
     @Body() moveDto: MoveDto,
-    @Request() request: any
+    @Request() request: AuthenticatedRequest
   ): Promise<Move> {
     try {
-      const playerId = request.user.id; // Assurez-vous d'avoir l'authentification configurée
+      const playerId = request.user?.id;
+      if (!playerId) {
+        this.setStatus(401);
+        throw new Error("Utilisateur non authentifié");
+      }
 
       const game = await GameService.getGameById(gameId);
       if (!game) {
