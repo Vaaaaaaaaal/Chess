@@ -15,6 +15,31 @@ class MoveService {
       throw new Error("Partie non trouvée");
     }
 
+    const currentPositions = await gameService.getCurrentPositions(gameId);
+    const piece = currentPositions[moveDto.from_position];
+
+    // Vérifier si c'est une promotion de pion valide
+    if (piece.type === "pawn") {
+      const targetRank = moveDto.to_position[1];
+      const isPromotion =
+        (piece.color === "white" && targetRank === "8") ||
+        (piece.color === "black" && targetRank === "1");
+
+      if (isPromotion) {
+        if (!moveDto.promotion) {
+          throw new Error("La promotion est requise pour ce mouvement");
+        }
+
+        if (
+          !["queen", "rook", "bishop", "knight"].includes(moveDto.promotion)
+        ) {
+          throw new Error("Type de promotion invalide");
+        }
+      } else if (moveDto.promotion) {
+        throw new Error("La promotion n'est pas possible pour ce mouvement");
+      }
+    }
+
     // Vérifier si le mouvement est valide
     const possibleMoves = await gameService.getPossibleMoves(
       gameId,
@@ -27,8 +52,6 @@ class MoveService {
     const moveCount = await Move.count({ where: { game_id: gameId } });
 
     // Simuler le mouvement pour vérifier l'échec
-    const currentPositions = await gameService.getCurrentPositions(gameId);
-    const piece = currentPositions[moveDto.from_position];
     const simulatedPositions = { ...currentPositions };
     delete simulatedPositions[moveDto.from_position];
     simulatedPositions[moveDto.to_position] = piece;
@@ -53,6 +76,7 @@ class MoveService {
       is_check: isCheck,
       is_checkmate: isCheckmate,
       move_number: moveCount + 1,
+      promotion: moveDto.promotion || null,
     });
 
     await game.update({
@@ -61,7 +85,17 @@ class MoveService {
     });
 
     // Mettre à jour le cache des positions
-    await gameService.updateGamePositions(gameId);
+    if (moveDto.promotion) {
+      const updatedPositions = { ...currentPositions };
+      delete updatedPositions[moveDto.from_position];
+      updatedPositions[moveDto.to_position] = {
+        type: moveDto.promotion,
+        color: piece.color,
+      };
+      await gameService.setCachedPositions(gameId, updatedPositions);
+    } else {
+      await gameService.updateGamePositions(gameId);
+    }
 
     return move;
   }

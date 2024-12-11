@@ -133,6 +133,7 @@ export class GameController extends Controller {
   @Response<{ message: string }>(404, "Partie non trouvée")
   /**
    * @summary Effectuer un mouvement de pièce
+   * @description Permet de déplacer une pièce et de promouvoir un pion si nécessaire
    */
   public async makeMove(
     @Path() gameId: number,

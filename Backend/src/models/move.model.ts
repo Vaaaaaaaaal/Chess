@@ -14,6 +14,7 @@ class Move extends Model {
   public is_checkmate!: boolean;
   public move_number!: number;
   public created_at!: Date;
+  public promotion?: string;
 }
 
 Move.init(
@@ -66,6 +67,10 @@ Move.init(
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+    },
+    promotion: {
+      type: DataTypes.STRING(10),
+      allowNull: true,
     },
   },
   {

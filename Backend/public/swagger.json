@@ -80,6 +80,9 @@
 					},
 					"to_position": {
 						"type": "string"
+					},
+					"promotion": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -233,6 +236,9 @@
 					"created_at": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"promotion": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -911,7 +917,12 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Record_string._type-string--color-string__"
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/Record_string._type-string--color-string__"
+										},
+										{}
+									]
 								}
 							}
 						}

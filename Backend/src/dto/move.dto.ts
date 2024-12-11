@@ -1,6 +1,7 @@
 export interface MoveDto {
   from_position: string;
   to_position: string;
+  promotion?: string;
 }
 
 export interface Move {
@@ -15,4 +16,5 @@ export interface Move {
   is_checkmate: boolean;
   move_number: number;
   created_at: Date;
+  promotion?: string;
 }

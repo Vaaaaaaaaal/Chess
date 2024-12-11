@@ -54,6 +54,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "from_position": {"dataType":"string","required":true},
             "to_position": {"dataType":"string","required":true},
+            "promotion": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -115,6 +116,7 @@ const models: TsoaRoute.Models = {
             "is_checkmate": {"dataType":"boolean","required":true},
             "move_number": {"dataType":"double","required":true},
             "created_at": {"dataType":"datetime","required":true},
+            "promotion": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
