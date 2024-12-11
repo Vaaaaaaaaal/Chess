@@ -1,7 +1,7 @@
 export interface CreateGameDto {
   username2: string;
   who_start: boolean;
-  game_state?: string;
+  is_public: boolean;
 }
 
 export interface GameResponse {

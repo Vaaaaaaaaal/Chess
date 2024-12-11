@@ -17,17 +17,20 @@ export const gameService = {
 
   async createGame(gameData: CreateGameDto): Promise<GameResponse> {
     try {
-      const payload = {
-        username2: gameData.username2,
-        who_start: gameData.who_start,
-        game_state: JSON.stringify(gameData.game_state),
-      };
+      const response = await fetch('http://localhost:3000/games', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        },
+        body: JSON.stringify(gameData)
+      });
 
-      const response = await axiosInstance.post<GameResponse>(
-        "/games",
-        payload
-      );
-      return response.data;
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création de la partie');
+      }
+
+      return response.json();
     } catch (error) {
       console.error("Erreur lors de la création de la partie:", error);
       throw error;
