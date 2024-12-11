@@ -1,64 +1,55 @@
-import { Body, Controller, Get, Path, Post, Put, Route, Tags } from "tsoa";
-import { CreateUserDto, UserDto } from "../dto/user.dto";
-import UserService from "../services/user.service";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Path,
+  Post,
+  Route,
+  Security,
+  Tags,
+} from "tsoa";
+import { UserDTO } from "../dto/user.dto";
+import { CreateUserBody } from "../interfaces/createUserBody.interface";
+import { UpdateUser } from "../interfaces/updateUser.interface";
+import { userService } from "../services/user.service";
 
 @Route("users")
-@Tags("User")
+@Tags("Users")
 export class UserController extends Controller {
-  private userService: typeof UserService;
-
-  constructor() {
-    super();
-    this.userService = UserService;
-  }
-
-  @Post("register")
-  public async registerUser(
-    @Body() createUserDto: CreateUserDto
-  ): Promise<UserDto> {
-    const user = await this.userService.createUser(
-      createUserDto.username,
-      createUserDto.email,
-      createUserDto.password
-    );
-    return {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      created_at: user.created_at,
-    };
-  }
-
   @Get("{id}")
-  public async getUser(@Path() id: number): Promise<UserDto | null> {
-    const user = await this.userService.getUserById(id);
-    return user
-      ? {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          created_at: user.created_at,
-        }
-      : null;
+  @Security("jwt", ["user:read"])
+  public async getUser(@Path() id: number): Promise<UserDTO | null> {
+    const user = await userService.getUser(id);
+    if (!user) {
+      this.setStatus(404);
+      return null;
+    }
+    return user;
   }
 
-  @Put("{id}")
-  public async updateUser(
-    @Path() id: number,
-    @Body() updateUserDto: Partial<UserDto>
-  ): Promise<UserDto | null> {
-    const [, updatedUsers] = await this.userService.updateUser(
-      id,
-      updateUserDto
-    );
-    const updatedUser = updatedUsers[0];
-    return updatedUser
-      ? {
-          id: updatedUser.id,
-          username: updatedUser.username,
-          email: updatedUser.email,
-          created_at: updatedUser.created_at,
-        }
-      : null;
+  @Post("/")
+  public async createUser(
+    @Body() requestBody: CreateUserBody
+  ): Promise<UserDTO | null> {
+    const user = await userService.createUser(requestBody);
+    if (!user) {
+      this.setStatus(401);
+      return null;
+    }
+    return user;
+  }
+
+  @Security("jwt", ["user:delete"])
+  @Delete("{id}")
+  public async deleteUser(@Path() id: number): Promise<void> {
+    await userService.deleteUser(id);
+  }
+
+  @Security("jwt", ["user:write"])
+  @Patch("/")
+  public async updateUser(@Body() body: UpdateUser): Promise<UserDTO | null> {
+    return await userService.updateUser(body);
   }
 }

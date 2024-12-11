@@ -7,99 +7,141 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"UserDto": {
+			"UserDTO": {
 				"properties": {
 					"id": {
 						"type": "number",
 						"format": "double"
 					},
 					"username": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"username",
-					"email",
-					"created_at"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CreateUserDto": {
-				"properties": {
-					"username": {
-						"type": "string"
-					},
-					"email": {
 						"type": "string"
 					},
 					"password": {
 						"type": "string"
+					},
+					"role": {
+						"type": "string"
 					}
 				},
 				"required": [
 					"username",
-					"email",
-					"password"
+					"password",
+					"role"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Partial_UserDto_": {
+			"CreateUserBody": {
 				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
+					"password": {
+						"type": "string"
 					},
 					"username": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"type": "object",
-				"description": "Make all properties in T optional"
-			},
-			"MoveDto": {
-				"properties": {
-					"from_position": {
-						"type": "string"
-					},
-					"to_position": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"from_position",
-					"to_position"
+					"password",
+					"username"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"LeaderboardDto": {
+			"UpdateUser": {
 				"properties": {
 					"id": {
 						"type": "number",
 						"format": "double"
 					},
-					"user_id": {
+					"password": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LeaderboardEntryDTO": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"score": {
 						"type": "number",
 						"format": "double"
 					},
-					"total_games": {
+					"rank": {
+						"type": "number",
+						"format": "double"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"username",
+					"score",
+					"rank",
+					"userId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Color": {
+				"enum": [
+					"BLACK",
+					"WHITE"
+				],
+				"type": "string"
+			},
+			"GameDTO": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"owner": {
+						"$ref": "#/components/schemas/UserDTO"
+					},
+					"public": {
+						"type": "boolean"
+					},
+					"owner_win": {
+						"type": "number",
+						"format": "double"
+					},
+					"creation_date": {
+						"type": "number",
+						"format": "double"
+					},
+					"date_end": {
+						"type": "number",
+						"format": "double"
+					},
+					"owner_color": {
+						"$ref": "#/components/schemas/Color"
+					}
+				},
+				"required": [
+					"id",
+					"owner",
+					"public",
+					"owner_win",
+					"creation_date",
+					"owner_color"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StatsDTO": {
+				"properties": {
+					"totalGames": {
 						"type": "number",
 						"format": "double"
 					},
@@ -107,239 +149,314 @@
 						"type": "number",
 						"format": "double"
 					},
-					"losses": {
+					"winRate": {
 						"type": "number",
 						"format": "double"
 					},
-					"draws": {
+					"publicGames": {
+						"type": "number",
+						"format": "double"
+					},
+					"privateGames": {
+						"type": "number",
+						"format": "double"
+					},
+					"gamesAsWhite": {
+						"type": "number",
+						"format": "double"
+					},
+					"gamesAsBlack": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"id",
-					"user_id",
-					"total_games",
+					"totalGames",
 					"wins",
-					"losses",
-					"draws"
+					"winRate",
+					"publicGames",
+					"privateGames",
+					"gamesAsWhite",
+					"gamesAsBlack"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"GameResponse": {
+			"PieceType": {
+				"enum": [
+					"PAWN",
+					"ROOK",
+					"KNIGHT",
+					"BISHOP",
+					"QUEEN",
+					"KING"
+				],
+				"type": "string"
+			},
+			"Piece": {
 				"properties": {
-					"id": {
+					"pieceType": {
+						"$ref": "#/components/schemas/PieceType"
+					},
+					"color": {
+						"$ref": "#/components/schemas/Color"
+					},
+					"i": {
 						"type": "number",
 						"format": "double"
 					},
-					"player1_id": {
+					"j": {
 						"type": "number",
 						"format": "double"
-					},
-					"username2": {
-						"type": "string"
-					},
-					"winner_id": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"is_public": {
-						"type": "boolean"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"game_state": {},
-					"who_start": {
-						"type": "boolean"
 					}
 				},
 				"required": [
-					"id",
-					"player1_id",
-					"username2",
-					"winner_id",
-					"is_public",
-					"created_at",
-					"game_state",
-					"who_start"
+					"pieceType",
+					"color",
+					"i",
+					"j"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CreateGameDto": {
+			"Case": {
 				"properties": {
-					"username2": {
-						"type": "string"
+					"color": {
+						"$ref": "#/components/schemas/Color"
 					},
-					"who_start": {
-						"type": "boolean"
-					},
-					"game_state": {
-						"type": "string"
+					"piece": {
+						"$ref": "#/components/schemas/Piece"
 					}
 				},
 				"required": [
-					"username2",
-					"who_start"
+					"color"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Record_string.any_": {
-				"properties": {},
-				"type": "object",
-				"description": "Construct a type with a set of properties K of type T"
-			},
-			"Move": {
+			"ReturnAction": {
 				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"game_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"player_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"from_position": {
-						"type": "string"
-					},
-					"to_position": {
-						"type": "string"
-					},
-					"piece_type": {
-						"type": "string"
-					},
-					"captured_piece": {
-						"type": "string"
-					},
-					"is_check": {
+					"success": {
 						"type": "boolean"
 					},
-					"is_checkmate": {
-						"type": "boolean"
-					},
-					"move_number": {
-						"type": "number",
-						"format": "double"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"id",
-					"game_id",
-					"player_id",
-					"from_position",
-					"to_position",
-					"piece_type",
-					"is_check",
-					"is_checkmate",
-					"move_number",
-					"created_at"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Record_string._type-string--color-string__": {
-				"properties": {},
-				"additionalProperties": {
-					"properties": {
-						"color": {
+					"result": {
+						"items": {
 							"type": "string"
 						},
-						"type": {
-							"type": "string"
-						}
+						"type": "array"
 					},
-					"required": [
-						"color",
-						"type"
-					],
-					"type": "object"
+					"listCase": {
+						"items": {
+							"items": {
+								"$ref": "#/components/schemas/Case"
+							},
+							"type": "array"
+						},
+						"type": "array"
+					},
+					"turn": {
+						"$ref": "#/components/schemas/Color"
+					},
+					"pieceKilled": {
+						"items": {
+							"$ref": "#/components/schemas/Piece"
+						},
+						"type": "array"
+					}
 				},
+				"required": [
+					"success",
+					"result",
+					"listCase",
+					"turn",
+					"pieceKilled"
+				],
 				"type": "object",
-				"description": "Construct a type with a set of properties K of type T"
+				"additionalProperties": false
 			},
-			"RegisterResponse": {
+			"MovePiece": {
 				"properties": {
-					"message": {
-						"type": "string"
+					"i": {
+						"type": "number",
+						"format": "double"
 					},
-					"userId": {
+					"j": {
+						"type": "number",
+						"format": "double"
+					},
+					"toI": {
+						"type": "number",
+						"format": "double"
+					},
+					"toJ": {
 						"type": "number",
 						"format": "double"
 					}
 				},
 				"required": [
-					"message",
-					"userId"
+					"i",
+					"j",
+					"toI",
+					"toJ"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"RegisterDto": {
+			"ReturnGameAction": {
+				"properties": {
+					"i": {
+						"type": "number",
+						"format": "double"
+					},
+					"j": {
+						"type": "number",
+						"format": "double"
+					},
+					"toI": {
+						"type": "number",
+						"format": "double"
+					},
+					"toJ": {
+						"type": "number",
+						"format": "double"
+					},
+					"piece": {
+						"type": "string"
+					},
+					"color": {
+						"type": "string"
+					},
+					"pieceKilled": {
+						"items": {
+							"$ref": "#/components/schemas/Piece"
+						},
+						"type": "array"
+					},
+					"step": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"i",
+					"j",
+					"toI",
+					"toJ",
+					"pieceKilled",
+					"step"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ChessReplay": {
+				"properties": {
+					"ownerUsername": {
+						"type": "string"
+					},
+					"ownerColor": {
+						"$ref": "#/components/schemas/Color"
+					},
+					"actions": {
+						"items": {
+							"$ref": "#/components/schemas/ReturnGameAction"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"ownerUsername",
+					"ownerColor",
+					"actions"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateGameBody": {
+				"properties": {
+					"isPublic": {
+						"type": "boolean"
+					},
+					"ownerColor": {
+						"$ref": "#/components/schemas/Color"
+					}
+				},
+				"required": [
+					"isPublic",
+					"ownerColor"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FormatedGame": {
+				"properties": {
+					"success": {
+						"type": "boolean"
+					},
+					"listCase": {
+						"items": {
+							"items": {
+								"$ref": "#/components/schemas/Case"
+							},
+							"type": "array"
+						},
+						"type": "array"
+					},
+					"turn": {
+						"$ref": "#/components/schemas/Color"
+					},
+					"pieceKilled": {
+						"items": {
+							"$ref": "#/components/schemas/Piece"
+						},
+						"type": "array"
+					},
+					"result": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"ownerColor": {
+						"$ref": "#/components/schemas/Color"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ChessLocation": {
+				"properties": {
+					"i": {
+						"type": "number",
+						"format": "double"
+					},
+					"j": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"i",
+					"j"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AuthBody": {
 				"properties": {
 					"username": {
 						"type": "string"
 					},
-					"email": {
+					"password": {
 						"type": "string"
 					},
-					"password": {
+					"grant_type": {
 						"type": "string"
 					}
 				},
 				"required": [
 					"username",
-					"email",
-					"password"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"LoginResponse": {
-				"properties": {
-					"token": {
-						"type": "string"
-					},
-					"userId": {
-						"type": "number",
-						"format": "double"
-					},
-					"username": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"token",
-					"userId",
-					"username"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"LoginDto": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"email",
-					"password"
+					"password",
+					"grant_type"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -347,16 +464,14 @@
 		},
 		"securitySchemes": {
 			"jwt": {
-				"type": "http",
-				"scheme": "bearer",
-				"bearerFormat": "JWT",
+				"type": "apiKey",
 				"in": "header",
 				"name": "Authorization"
 			}
 		}
 	},
 	"info": {
-		"title": "backend",
+		"title": "express-typescript",
 		"version": "1.0.0",
 		"license": {
 			"name": "ISC"
@@ -364,38 +479,6 @@
 		"contact": {}
 	},
 	"paths": {
-		"/users/register": {
-			"post": {
-				"operationId": "RegisterUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/UserDto"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/CreateUserDto"
-							}
-						}
-					}
-				}
-			}
-		},
 		"/users/{id}": {
 			"get": {
 				"operationId": "GetUser",
@@ -407,7 +490,7 @@
 								"schema": {
 									"allOf": [
 										{
-											"$ref": "#/components/schemas/UserDto"
+											"$ref": "#/components/schemas/UserDTO"
 										}
 									],
 									"nullable": true
@@ -417,9 +500,15 @@
 					}
 				},
 				"tags": [
-					"User"
+					"Users"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": [
+							"user:read"
+						]
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",
@@ -432,7 +521,73 @@
 					}
 				]
 			},
-			"put": {
+			"delete": {
+				"operationId": "DeleteUser",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [
+					{
+						"jwt": [
+							"user:delete"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/users": {
+			"post": {
+				"operationId": "CreateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/UserDTO"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserBody"
+							}
+						}
+					}
+				}
+			},
+			"patch": {
 				"operationId": "UpdateUser",
 				"responses": {
 					"200": {
@@ -442,7 +597,7 @@
 								"schema": {
 									"allOf": [
 										{
-											"$ref": "#/components/schemas/UserDto"
+											"$ref": "#/components/schemas/UserDTO"
 										}
 									],
 									"nullable": true
@@ -452,108 +607,29 @@
 					}
 				},
 				"tags": [
-					"User"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Partial_UserDto_"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/moves/games/{gameId}": {
-			"post": {
-				"operationId": "CreateMove",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Move"
+					"Users"
 				],
 				"security": [
 					{
-						"jwt": []
+						"jwt": [
+							"user:write"
+						]
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "gameId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/MoveDto"
+								"$ref": "#/components/schemas/UpdateUser"
 							}
 						}
 					}
 				}
-			},
-			"get": {
-				"operationId": "GetMovesByGameId",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Move"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "gameId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
 			}
 		},
-		"/leaderboard": {
+		"/leaderboards": {
 			"get": {
 				"operationId": "GetLeaderboard",
 				"responses": {
@@ -563,7 +639,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/LeaderboardDto"
+										"$ref": "#/components/schemas/LeaderboardEntryDTO"
 									},
 									"type": "array"
 								}
@@ -578,21 +654,19 @@
 				"parameters": []
 			}
 		},
-		"/leaderboard/{id}": {
+		"/leaderboards/history/me": {
 			"get": {
-				"operationId": "GetUserLeaderboard",
+				"operationId": "GetUserGame",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/LeaderboardDto"
-										}
-									],
-									"nullable": true
+									"items": {
+										"$ref": "#/components/schemas/GameDTO"
+									},
+									"type": "array"
 								}
 							}
 						}
@@ -600,6 +674,161 @@
 				},
 				"tags": [
 					"Leaderboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/leaderboards/history/{userId}": {
+			"get": {
+				"operationId": "GetLeaderboardUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/GameDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/leaderboards/stats/me": {
+			"get": {
+				"operationId": "GetMyStats",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StatsDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/leaderboards/stats/{userId}": {
+			"get": {
+				"operationId": "GetUserStats",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StatsDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/games/piece/move": {
+			"post": {
+				"operationId": "MovePiece",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ReturnAction"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/MovePiece"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/games/replay/{id}": {
+			"get": {
+				"operationId": "GetReplay",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChessReplay"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
 				],
 				"security": [],
 				"parameters": [
@@ -615,7 +844,7 @@
 				]
 			}
 		},
-		"/games": {
+		"/games/create": {
 			"post": {
 				"operationId": "CreateGame",
 				"responses": {
@@ -624,7 +853,16 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/GameResponse"
+									"properties": {
+										"gameId": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"gameId"
+									],
+									"type": "object"
 								}
 							}
 						}
@@ -644,14 +882,14 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateGameDto"
+								"$ref": "#/components/schemas/CreateGameBody"
 							}
 						}
 					}
 				}
 			}
 		},
-		"/games/{id}": {
+		"/games": {
 			"get": {
 				"operationId": "GetGame",
 				"responses": {
@@ -660,7 +898,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/GameResponse"
+									"$ref": "#/components/schemas/FormatedGame"
 								}
 							}
 						}
@@ -669,201 +907,28 @@
 				"tags": [
 					"Games"
 				],
-				"security": [],
-				"parameters": [
+				"security": [
 					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"jwt": []
 					}
-				]
-			}
-		},
-		"/games/cache/status": {
-			"get": {
-				"operationId": "GetCacheStatus",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"stats": {
-											"properties": {
-												"ttl": {
-													"type": "number",
-													"format": "double"
-												},
-												"misses": {
-													"type": "number",
-													"format": "double"
-												},
-												"hits": {
-													"type": "number",
-													"format": "double"
-												},
-												"keys": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"ttl",
-												"misses",
-												"hits",
-												"keys"
-											],
-											"type": "object"
-										},
-										"content": {
-											"$ref": "#/components/schemas/Record_string.any_"
-										}
-									},
-									"required": [
-										"stats",
-										"content"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Games"
 				],
-				"security": [],
 				"parameters": []
-			}
-		},
-		"/games/{gameId}/possible-moves/{position}": {
-			"get": {
-				"operationId": "GetPossibleMoves",
+			},
+			"delete": {
+				"operationId": "Delete",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"type": "string"
-									},
-									"type": "array"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Position invalide",
-						"content": {
-							"application/json": {
-								"schema": {
 									"properties": {
-										"message": {
-											"type": "string"
+										"success": {
+											"type": "boolean"
 										}
 									},
 									"required": [
-										"message"
-									],
-									"type": "object"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Partie non trouvée",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Games"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "gameId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "path",
-						"name": "position",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/games/{gameId}/move": {
-			"post": {
-				"operationId": "MakeMove",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Move"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Mouvement invalide",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Partie non trouvée",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
+										"success"
 									],
 									"type": "object"
 								}
@@ -879,73 +944,26 @@
 						"jwt": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "gameId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/MoveDto"
-							}
-						}
-					}
-				}
+				"parameters": []
 			}
 		},
-		"/games/{gameId}/positions": {
+		"/games/current-game": {
 			"get": {
-				"operationId": "GetGamePositions",
+				"operationId": "GetUserGameId",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Record_string._type-string--color-string__"
-								}
-							}
-						}
-					},
-					"304": {
-						"description": "Positions non modifiées",
-						"content": {
-							"application/json": {
-								"schema": {
 									"properties": {
-										"message": {
-											"type": "string"
+										"gameId": {
+											"type": "number",
+											"format": "double"
 										}
 									},
 									"required": [
-										"message"
-									],
-									"type": "object"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Partie non trouvée",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
+										"gameId"
 									],
 									"type": "object"
 								}
@@ -956,54 +974,105 @@
 				"tags": [
 					"Games"
 				],
-				"security": [],
-				"parameters": [
+				"security": [
 					{
-						"in": "path",
-						"name": "gameId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "header",
-						"name": "if-none-match",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
+						"jwt": []
 					}
-				]
+				],
+				"parameters": []
 			}
 		},
-		"/auth/register": {
+		"/games/piece/possible-move": {
 			"post": {
-				"operationId": "Register",
+				"operationId": "GetPossibleMove",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/RegisterResponse"
+									"items": {
+										"$ref": "#/components/schemas/ChessLocation"
+									},
+									"type": "array"
 								}
 							}
 						}
 					}
 				},
 				"tags": [
-					"Auth"
+					"Games"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/RegisterDto"
+								"properties": {
+									"j": {
+										"type": "number",
+										"format": "double"
+									},
+									"i": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"j",
+									"i"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/games/piece/upgrade": {
+			"post": {
+				"operationId": "UpgradePiece",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FormatedGame"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"piece": {
+										"$ref": "#/components/schemas/PieceType"
+									}
+								},
+								"required": [
+									"piece"
+								],
+								"type": "object"
 							}
 						}
 					}
@@ -1012,14 +1081,23 @@
 		},
 		"/auth/login": {
 			"post": {
-				"operationId": "Login",
+				"operationId": "Auth",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/LoginResponse"
+									"properties": {
+										"token": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"token"
+									],
+									"type": "object",
+									"nullable": true
 								}
 							}
 						}
@@ -1035,50 +1113,11 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/LoginDto"
+								"$ref": "#/components/schemas/AuthBody"
 							}
 						}
 					}
 				}
-			}
-		},
-		"/auth/verify": {
-			"get": {
-				"operationId": "VerifyToken",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"userId": {
-											"type": "number",
-											"format": "double"
-										},
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"userId",
-										"message"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": []
 			}
 		}
 	},

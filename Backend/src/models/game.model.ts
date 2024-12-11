@@ -1,15 +1,33 @@
-import { DataTypes, Model } from "sequelize";
-import db from "../config/database";
+import { Model, DataTypes } from "sequelize";
+import sequelize from "../config/database"; // Connexion à la base de données
+import { User } from "./user.model";
+import { Color } from "../enums/color.enum";
+import { GameAction } from "./gameAction.model";
 
-class Game extends Model {
+export interface GameAttributes {
+  id?: number;
+  owner?: User;
+  public: boolean;
+  owner_id: number;
+  owner_win?: number;
+  creation_date: number;
+  date_end?: number;
+  owner_color: Color;
+  gameAction?: GameAction[];
+}
+
+export class Game
+  extends Model<GameAttributes>
+  implements GameAttributes {
   public id!: number;
-  public player1_id!: number;
-  public username2!: string;
-  public winner_id!: number | null;
-  public is_public!: boolean;
-  public game_state!: string;
-  public created_at!: Date;
-  public who_start!: boolean;
+  public owner!: User;
+  public owner_id!: number;
+  public public!: boolean;
+  public creation_date!: number;
+  public date_end!: number;
+  public owner_color!: Color
+  public owner_win!: number;
+  public gameAction?: GameAction[];
 }
 
 Game.init(
@@ -19,40 +37,34 @@ Game.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    player1_id: {
+    owner_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    username2: {
-      type: DataTypes.STRING,
+    public: {
+      type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    winner_id: {
+    owner_win: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    },
+    creation_date: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    date_end: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    is_public: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
-    game_state: {
+    owner_color: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    who_start: {
-      type: DataTypes.BOOLEAN,
       allowNull: false,
     },
   },
   {
-    sequelize: db,
-    tableName: "games",
-    timestamps: false,
+    sequelize,
+    tableName: "Game",
   }
 );
 
-export default Game;

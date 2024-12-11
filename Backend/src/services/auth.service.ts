@@ -1,44 +1,27 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import UserService from "./user.service";
+import { AuthBody } from "../interfaces/authBody.interface";
+import { userService } from "./user.service";
+const jwt = require("jsonwebtoken");
+const env = require('dotenv').config()
 
-const JWT_SECRET = process.env.JWT_SECRET || "votre_secret_jwt";
+export class AuthService {
 
-class AuthService {
-  async register(username: string, email: string, password: string) {
-    return UserService.createUser(username, email, password);
-  }
+    
+    public async auth(authBody: AuthBody): Promise<string | null>{
 
-  async login(email: string, password: string) {
-    const user = await UserService.getUserByEmail(email);
-    if (!user) {
-      throw new Error("Utilisateur non trouvé");
+        const {username, password} = authBody;
+
+        const user = await userService.getUserByUsername(username);
+
+        if(!user) return null;
+        if(user.password == Buffer.from(password).toString('base64')){
+            
+            const token = await jwt.sign({ id: user.id, username: user.username }, "secret");
+            return token
+        }
+
+        return null;
     }
-
-    const validPassword = await bcrypt.compare(password, user.password_hash);
-    if (!validPassword) {
-      throw new Error("Mot de passe incorrect");
-    }
-
-    const token = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-      },
-      JWT_SECRET,
-      { expiresIn: "20m" }
-    );
-
-    return {
-      token,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-      },
-    };
-  }
+    
 }
 
-export default new AuthService();
+export const authService = new AuthService();

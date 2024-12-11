@@ -1,0 +1,651 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style-type: none;
+  font-family: 'Poppins', sans-serif;
+}
+body {
+  background-color: #1e1e1e;
+}
+main {
+  flex: 1;
+  width: 100%;
+  margin-top: 80px;
+}
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar .logo {
+  height: 40px;
+  width: auto;
+}
+
+.navbar {
+  background-color: #2a2a2a;
+  width: 100%;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar nav ul {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 0;
+}
+
+.navbar nav ul li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  color: white;
+}
+
+.navbar nav ul li a img {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+}
+
+.navbar .create-account {
+  font-size: 14px;
+  background-color: #1e1e1e;
+  padding: 9px 20px;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: 400;
+}
+
+.navbar .login-btn {
+  font-size: 14px;
+  background-color: #ff6b6b;
+  padding: 9px 20px;
+  border-radius: 5px;
+  color: white;
+  font-weight: 400;
+}
+
+#home-page .playboard {
+  width: 496px;
+  height: 496px;
+}
+
+#home-page h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+h1,
+h2,
+h3 {
+  color: #ff6b6b;
+}
+
+@media screen and (max-width: 768px) {
+  #main {
+    flex-direction: column;
+  }
+}
+
+#home-page {
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+#home-page .subtitle {
+  color: white;
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+#home-page .chess-quote {
+  margin: 3rem auto;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 800px;
+  color: white;
+}
+
+#home-page .features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+#home-page .feature-card {
+  padding: 1.5rem;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  color: white;
+}
+
+#home-page .feature-card h3 {
+  margin-bottom: 1rem;
+}
+
+#home-page .feature-card p {
+  color: #d3d2d2;
+}
+
+#home-page .btn.secondary {
+  background-color: #4a4a4a;
+  color: #e0e0e0;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+#home-page blockquote {
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+#home-page cite {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+#home-page .actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 2rem 0;
+}
+
+#home-page .start-game,
+#home-page .btn.secondary {
+  width: 250px;
+  padding: 15px 24px;
+  font-size: 22px;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+}
+
+#home-page .start-game {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+#home-page .btn.secondary {
+  background-color: #302e2b;
+  color: white;
+}
+
+#home-page .start-game-title {
+  margin: 0;
+}
+
+.p-card {
+  border-radius: 1rem;
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.start-game,
+.leaderboard-btn {
+  flex: 0 1 auto;
+  min-width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100px;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.start-game {
+  background-color: #f87171;
+  color: white;
+  cursor: pointer;
+}
+
+.leaderboard-btn {
+  background-color: #1f2937;
+  color: white;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.start-game:hover,
+.leaderboard-btn:hover {
+  opacity: 0.9;
+}
+
+.p-selectbutton {
+  display: flex;
+}
+
+.p-selectbutton .p-button {
+  padding: 0.5rem 1rem;
+}
+
+.w-8rem {
+  width: 8rem;
+}
+
+.footer {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  padding: 1rem 0;
+  width: 100%;
+}
+
+#home-page .start-game {
+  background-color: #ff6b6b;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+  cursor: pointer;
+}
+
+#home-page .start-game-title {
+  font-size: 28px;
+  font-weight: 500;
+}
+
+#login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  gap: 30px;
+  position: relative;
+  width: 100%;
+}
+
+.background-logo-image {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  bottom: 0;
+}
+
+#login-page .login-logo {
+  width: 158px;
+}
+
+#login-page .base-container {
+  padding: 40px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: #262421;
+}
+
+#login-page .base-container form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#login-page .base-container .form-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  background-color: #3c3a38;
+  border: 1px solid #4f4d4b;
+  border-radius: 5px;
+  padding: 10px 15px;
+}
+
+#login-page .base-container .form-container img {
+  height: 15px;
+  width: 15px;
+  flex-shrink: 0;
+}
+
+#login-page .base-container .form-container input {
+  color: #868584;
+  border: none;
+  background-color: none;
+  outline: none;
+  width: 100%;
+  padding: 0;
+  background-color: transparent;
+  font-size: 13px !important;
+}
+
+#login-page .base-container form button {
+  margin-top: 10px;
+  width: 100% !important;
+  background-color: #ff6b6b;
+  color: white;
+  text-align: center;
+  padding: 15px 24px;
+  font-size: 22px;
+  font-weight: 500;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+#login-page .separator {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 35px;
+}
+
+#login-page .separator p {
+  font-size: 14px;
+  padding: 0px 25px;
+  flex-shrink: 0;
+  color: #868584;
+}
+
+#login-page .separator .ligne {
+  width: 100%;
+  height: 1px;
+  background-color: #868584;
+}
+
+#login-page .new {
+  padding: 20px 30px;
+  background-color: #211f1c;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#login-page .new p {
+  font-size: 14px;
+  color: #d3d2d2;
+  text-align: center;
+}
+
+.users {
+  display: flex;
+  gap: 10px;
+  background-color: #211f1c;
+  border-radius: 5px;
+  width: 200px;
+  padding: 5px;
+}
+
+.users-seconde {
+  flex-direction: row-reverse;
+}
+
+.users img {
+  height: 50px;
+  width: 50px;
+  border-radius: 5px;
+}
+
+.list-users {
+  margin-top: 30px;
+  padding: 0 1rem;
+}
+
+.user-color {
+  color: #908c88;
+  text-align: left;
+  font-size: 15px;
+}
+
+.guest {
+  color: white;
+  font-weight: 500;
+}
+
+.colot-turn {
+  color: white;
+}
+
+.users-seconde .user-color {
+  text-align: right;
+}
+
+.piece-black svg {
+  fill: #5c5957;
+}
+
+.piece img {
+  width: 100%;
+}
+
+.all-piece-killed {
+  background-color: rgb(38, 37, 34);
+  border-radius: 5px;
+  justify-content: center;
+  padding: 3px;
+  margin-top: 5px;
+}
+.piece {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+.list-piece-killed {
+  display: flex;
+  flex-direction: column;
+}
+
+.leave-game {
+  background-color: #ff6b6b !important;
+  border: none !important;
+}
+
+.chess-board {
+  width: 600px;
+  height: 600px;
+  border: 2px solid #333;
+}
+
+.chess-cell {
+  width: 75px;
+  height: 75px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.chess-cell:hover {
+  opacity: 0.8;
+}
+
+.possible-move {
+  position: relative;
+}
+
+.possible-move::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  background-color: #606060;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.selected-cell {
+  animation: pulse 2s infinite;
+}
+
+.last-move-from,
+.last-move-to {
+  background-color: rgba(255, 0, 34, 0.3) !important;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: inset 0 0 0 8px rgba(0, 128, 255, 0.4);
+  }
+
+  50% {
+    box-shadow: inset 0 0 0 8px rgba(0, 128, 255, 0.2);
+  }
+
+  100% {
+    box-shadow: inset 0 0 0 8px rgba(0, 128, 255, 0.4);
+  }
+}
+
+.chess-board-rotate {
+  transform: rotate(180deg);
+}
+
+.chess-board-rotate .chess-cell {
+  transform: rotate(180deg);
+}
+
+.noir {
+  background-color: #ff6b6b;
+}
+
+#main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.topleft {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-size: 12px;
+}
+
+.bottomleft {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  font-size: 12px;
+}
+
+.text-white {
+  color: white;
+}
+
+.text-noir {
+  color: black;
+}
+
+.promotion-piece {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.promotion-piece:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.bg-white {
+  background-color: #fff !important;
+}
+
+.turn-banner {
+  background-color: #2a2a2a;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.player-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.player {
+  text-align: center;
+  min-width: 120px;
+}
+
+.player-name {
+  color: white;
+  font-weight: 500;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.player-color {
+  color: #908c88;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.turn-text {
+  flex: 1;
+  text-align: center;
+}
+
+.turn-text h1 {
+  color: white;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+#pieceKilled {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.leave-game {
+  margin-top: 1rem;
+  width: 200px;
+}

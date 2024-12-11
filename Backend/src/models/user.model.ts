@@ -1,12 +1,21 @@
-import { DataTypes, Model } from "sequelize";
-import sequelize from "../config/database";
+import { Model, DataTypes } from "sequelize";
+import sequelize from "../config/database"; // Connexion à la base de données
+import { Game } from "./game.model";
 
-class User extends Model {
+export interface UserAttributes {
+  id?: number;
+  username: string;
+  password: string;
+  role: string;
+}
+
+export class User
+  extends Model<UserAttributes>
+  implements UserAttributes {
   public id!: number;
   public username!: string;
-  public email!: string;
-  public password_hash!: string;
-  public readonly created_at!: Date;
+  public password!: string;
+  public role!: string;
 }
 
 User.init(
@@ -19,28 +28,22 @@ User.init(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password_hash: {
+    password: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {
     sequelize,
-    modelName: "User",
-    tableName: "users",
-    timestamps: false,
+    tableName: "User",
   }
 );
 
-export default User;
+
+User.hasMany(Game, { foreignKey: "owner_id", as: "game_owner" });
+Game.belongsTo(User, { foreignKey: "owner_id", as: "owner" });

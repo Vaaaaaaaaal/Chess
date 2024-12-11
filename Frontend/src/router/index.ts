@@ -1,41 +1,18 @@
-import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import { authGuard } from "./guards";
+import { createRouter, createWebHistory } from 'vue-router';
 
-const routes = [
-  {
-    path: "/",
-    name: "home",
-    component: HomeView,
-  },
-  {
-    path: "/login",
-    name: "login",
-    component: () => import("../views/LoginView.vue"),
-  },
-  {
-    path: "/register",
-    name: "register",
-    component: () => import("../views/RegisterView.vue"),
-  },
-  {
-    path: "/game",
-    name: "game",
-    component: () => import("../views/GameView.vue"),
-  },
-  // ... autres routes ...
-  {
-    path: "/:pathMatch(.*)*",
-    name: "not-found",
-    component: () => import("../views/NotFoundView.vue"),
-  },
-];
-
-const router = createRouter({
+export default createRouter({
   history: createWebHistory(),
-  routes,
+  routes: [
+    {
+      path: '/stats/me',
+      name: 'my-stats',
+      component: () => import('../views/StatsView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/stats/:userId',
+      name: 'user-stats',
+      component: () => import('../views/StatsView.vue'),
+    },
+  ],
 });
-
-router.beforeEach(authGuard);
-
-export default router;

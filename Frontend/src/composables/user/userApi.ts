@@ -1,28 +1,19 @@
-import { UserRegistration } from "@/types/user";
-import axiosInstance from "@/utils/axios";
+import axiosInstance from '@/config/AxiosConfig';
+import { ApiUrlConnection, ApiUrlRegister } from '@/constants/ApiUrl';
+import type { UserDTO } from '@/modelDTO/User.dto';
 
-export const userApi = {
-  register: async (userData: UserRegistration) => {
-    try {
-      const response = await axiosInstance.post("/auth/register", userData);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Erreur lors de l'inscription"
-      );
+export function useUserApi() {
+  return {
+    async authenticate(user: UserDTO): Promise<string> {
+      const res = await axiosInstance.post<{ token: string }>(`${ApiUrlConnection}`, {
+        grant_type: 'password',
+        username: user.username,
+        password: user.password
+      });
+      return res.data.token;
+    },
+    async register(user: UserDTO): Promise<void> {
+      await axiosInstance.post(`${ApiUrlRegister}`, user);
     }
-  },
-
-  getUserProfile: async (userId: number) => {
-    const response = await axiosInstance.get(`/users/${userId}`);
-    return response.data;
-  },
-
-  updateUserProfile: async (
-    userId: number,
-    userData: Partial<UserRegistration>
-  ) => {
-    const response = await axiosInstance.put(`/users/${userId}`, userData);
-    return response.data;
-  },
-};
+  }
+}

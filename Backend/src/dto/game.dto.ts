@@ -1,16 +1,14 @@
-export interface CreateGameDto {
-  username2: string;
-  who_start: boolean;
-  game_state?: string;
-}
+import { Color } from "../enums/color.enum";
+import { GameAction } from "../models/gameAction.model";
+import { User } from "../models/user.model";
+import { UserDTO } from "./user.dto";
 
-export interface GameResponse {
+export interface GameDTO {
   id: number;
-  player1_id: number;
-  username2: string;
-  winner_id: number | null;
-  is_public: boolean;
-  created_at: Date;
-  game_state: any;
-  who_start: boolean;
+  owner: UserDTO;
+  public: boolean;
+  owner_win: number;
+  creation_date: number;
+  date_end?: number;
+  owner_color: Color;
 }
