@@ -4,7 +4,11 @@ import Game from "../models/game.model";
 import Move from "../models/move.model";
 
 // Création d'une instance de cache avec un TTL de 1 heure
-const gameCache = new NodeCache({ stdTTL: 3600 });
+const gameCache = new NodeCache({
+  stdTTL: 3600, // 1 heure en secondes
+  checkperiod: 600, // Vérification toutes les 10 minutes
+  useClones: false, // Pour de meilleures performances
+});
 
 class GameService {
   async createGame(
@@ -36,16 +40,16 @@ class GameService {
     return `game_positions_${gameId}`;
   }
 
-  private getCachedPositions(
+  async getCachedPositions(
     gameId: number
-  ): Record<string, { type: string; color: string }> | null {
+  ): Promise<Record<string, { type: string; color: string }> | null> {
     return gameCache.get(this.getCacheKey(gameId)) || null;
   }
 
-  private setCachedPositions(
+  async setCachedPositions(
     gameId: number,
     positions: Record<string, { type: string; color: string }>
-  ): void {
+  ): Promise<void> {
     gameCache.set(this.getCacheKey(gameId), positions);
   }
 
@@ -53,8 +57,8 @@ class GameService {
     gameId: number
   ): Promise<Record<string, { type: string; color: string }>> {
     // Vérifier d'abord le cache
-    const cachedPositions = this.getCachedPositions(gameId);
-    if (cachedPositions) {
+    const cachedPositions = await this.getCachedPositions(gameId);
+    if (cachedPositions !== null) {
       return cachedPositions;
     }
 

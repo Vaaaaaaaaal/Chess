@@ -10,7 +10,7 @@
           End
         </button>
       </div>
-      <ChessBoard />
+      <ChessBoard :gameId="gameId" />
     </div>
 
     <StartGameModal v-model="showStartModal" @start="handleGameStart" />

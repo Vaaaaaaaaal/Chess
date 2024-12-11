@@ -29,6 +29,7 @@
 
     <div class="row-labels">
       <span v-for="row in 8" :key="row">{{ 9 - row }}</span>
+      <span v-for="row in 8" :key="row">{{ 9 - row }}</span>
     </div>
   </div>
 </template>
@@ -78,7 +79,7 @@ const getCellColor = (row: number, col: number): string => {
 };
 
 const getPiece = (row: number, col: number): string => {
-  if (row === 8) {
+  if (row === 1) {
     switch (col) {
       case 1:
       case 8:
@@ -95,9 +96,9 @@ const getPiece = (row: number, col: number): string => {
         return pieces.value.white.king;
     }
   }
-  if (row === 7) return pieces.value.white.pawn;
+  if (row === 2) return pieces.value.white.pawn;
 
-  if (row === 1) {
+  if (row === 8) {
     switch (col) {
       case 1:
       case 8:
@@ -114,7 +115,7 @@ const getPiece = (row: number, col: number): string => {
         return pieces.value.black.king;
     }
   }
-  if (row === 2) return pieces.value.black.pawn;
+  if (row === 7) return pieces.value.black.pawn;
 
   return "";
 };

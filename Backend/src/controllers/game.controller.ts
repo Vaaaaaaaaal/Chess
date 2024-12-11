@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   Path,
   Post,
   Request,
@@ -152,6 +153,62 @@ export class GameController extends Controller {
       }
 
       return await MoveService.createMove(gameId, playerId, moveDto);
+    } catch (error) {
+      this.setStatus(500);
+      throw error;
+    }
+  }
+
+  @Get("{gameId}/positions")
+  @Response<{ message: string }>(304, "Positions non modifiées")
+  @Response<{ message: string }>(404, "Partie non trouvée")
+  /**
+   * @summary Obtenir les positions des pièces d'une partie
+   * @param gameId ID de la partie
+   */
+  public async getGamePositions(
+    @Path() gameId: number,
+    @Header("if-none-match") ifNoneMatch?: string
+  ): Promise<Record<string, { type: string; color: string }> | void> {
+    try {
+      const game = await GameService.getGameById(gameId);
+      if (!game) {
+        this.setStatus(404);
+        throw new Error("Partie non trouvée");
+      }
+
+      // Récupérer les positions en cache
+      const cachedPositions = await GameService.getCachedPositions(gameId);
+      console.log("Cache key:", `game_positions_${gameId}`);
+      console.log("Cached positions:", cachedPositions);
+
+      if (cachedPositions) {
+        const etag = `"${Buffer.from(JSON.stringify(cachedPositions)).toString(
+          "base64"
+        )}"`;
+        console.log("Generated ETag:", etag);
+        console.log("Received If-None-Match:", ifNoneMatch);
+
+        if (ifNoneMatch === etag) {
+          this.setStatus(304);
+          this.setHeader("ETag", etag);
+          return;
+        }
+
+        this.setHeader("ETag", etag);
+        return cachedPositions;
+      }
+
+      console.log("No cache found, calculating positions...");
+      const positions = await GameService.calculatePiecesPositions(gameId);
+      await GameService.setCachedPositions(gameId, positions);
+
+      const etag = `"${Buffer.from(JSON.stringify(positions)).toString(
+        "base64"
+      )}"`;
+      this.setHeader("ETag", etag);
+
+      return positions;
     } catch (error) {
       this.setStatus(500);
       throw error;
