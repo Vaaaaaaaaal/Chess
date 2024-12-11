@@ -196,11 +196,11 @@ const handleCellClick = async (row: number, col: number) => {
 .chess-board {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(8, 60px);
-  grid-template-rows: repeat(8, 60px);
-  border: 2px solid #333;
-  width: 480px;
-  height: 480px;
+  grid-template-columns: repeat(8, 90px);
+  grid-template-rows: repeat(8, 90px);
+  border: 3px solid #333;
+  width: 720px;
+  height: 720px;
 }
 
 .board-row {
@@ -208,8 +208,8 @@ const handleCellClick = async (row: number, col: number) => {
 }
 
 .board-cell {
-  width: 60px;
-  height: 60px;
+  width: 90px;
+  height: 90px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -225,8 +225,8 @@ const handleCellClick = async (row: number, col: number) => {
 }
 
 .piece {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   z-index: 2;
 }
 
@@ -242,33 +242,35 @@ const handleCellClick = async (row: number, col: number) => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  background-color: rgba(0, 255, 0, 0.5);
+  width: 30px;
+  height: 30px;
+  background-color: #59675980;
   border-radius: 50%;
   z-index: 1;
 }
 
 .selected-piece {
-  background-color: rgba(255, 255, 0, 0.3) !important;
+  background-color: #59675980 !important;
 }
 
 .col-labels {
   position: absolute;
-  bottom: -25px;
+  bottom: -35px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: space-around;
+  font-size: 1.2em;
 }
 
 .row-labels {
   position: absolute;
-  left: -25px;
+  left: -35px;
   top: 0;
   bottom: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  font-size: 1.2em;
 }
 </style>
