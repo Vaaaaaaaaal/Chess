@@ -169,7 +169,7 @@ export class GameController extends Controller {
   public async getGamePositions(
     @Path() gameId: number,
     @Header("if-none-match") ifNoneMatch?: string
-  ): Promise<Record<string, { type: string; color: string }>> {
+  ): Promise<Record<string, { type: string; color: string }> | void> {
     try {
       const game = await GameService.getGameById(gameId);
       if (!game) {
@@ -192,7 +192,7 @@ export class GameController extends Controller {
         if (ifNoneMatch === etag) {
           this.setStatus(304);
           this.setHeader("ETag", etag);
-          return cachedPositions;
+          return;
         }
 
         this.setHeader("ETag", etag);
