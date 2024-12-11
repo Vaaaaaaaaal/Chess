@@ -1,66 +1,72 @@
+import type { Move as MoveInterface } from "../dto/move.dto";
 import { MoveDto } from "../dto/move.dto";
 import Game from "../models/game.model";
 import Move from "../models/move.model";
+import GameService from "./game.service";
 
 class MoveService {
   async createMove(
     gameId: number,
     playerId: number,
     moveDto: MoveDto
-  ): Promise<Move> {
-    // Vérifier si la partie existe
+  ): Promise<MoveInterface> {
     const game = await Game.findByPk(gameId);
     if (!game) {
       throw new Error("Partie non trouvée");
     }
 
-    // Vérifier si c'est le tour du joueur
-    if (game.status !== "active") {
-      throw new Error("La partie n'est pas active");
+    // Vérifier si le mouvement est valide
+    const possibleMoves = await GameService.getPossibleMoves(
+      gameId,
+      moveDto.from_position
+    );
+    if (!possibleMoves.includes(moveDto.to_position)) {
+      throw new Error("Mouvement invalide");
     }
 
-    const isPlayer1 = game.player1_id === playerId;
-    const isPlayer2 = game.player2_id === playerId;
-
-    if (!isPlayer1 && !isPlayer2) {
-      throw new Error("Vous n'êtes pas un joueur de cette partie");
-    }
-
-    if (
-      (game.current_turn === 1 && !isPlayer1) ||
-      (game.current_turn === 2 && !isPlayer2)
-    ) {
-      throw new Error("Ce n'est pas votre tour");
-    }
-
-    // Compter le nombre de mouvements existants
     const moveCount = await Move.count({ where: { game_id: gameId } });
 
-    // Créer le mouvement
+    // Simuler le mouvement pour vérifier l'échec
+    const currentPositions = await GameService.getCurrentPositions(gameId);
+    const piece = currentPositions[moveDto.from_position];
+    const simulatedPositions = { ...currentPositions };
+    delete simulatedPositions[moveDto.from_position];
+    simulatedPositions[moveDto.to_position] = piece;
+
+    // Vérifier si le mouvement met l'adversaire en échec
+    const opponentColor = piece.color === "white" ? "black" : "white";
+    const isCheck = await GameService.isKingInCheck(gameId, opponentColor);
+
+    // Vérifier si c'est un échec et mat
+    let isCheckmate = false;
+    if (isCheck) {
+      isCheckmate = await GameService.isCheckmate(gameId, opponentColor);
+    }
+
     const move = await Move.create({
       game_id: gameId,
       player_id: playerId,
       from_position: moveDto.from_position,
       to_position: moveDto.to_position,
-      piece_type: moveDto.piece_type,
-      captured_piece: moveDto.captured_piece,
-      is_check: moveDto.is_check || false,
-      is_checkmate: moveDto.is_checkmate || false,
+      piece_type: piece.type,
+      captured_piece: currentPositions[moveDto.to_position]?.type || null,
+      is_check: isCheck,
+      is_checkmate: isCheckmate,
       move_number: moveCount + 1,
     });
 
-    // Mettre à jour l'état de la partie
     await game.update({
-      current_turn: game.current_turn === 1 ? 2 : 1,
-      game_state: moveDto.game_state,
-      status: moveDto.is_checkmate ? "completed" : "active",
-      winner_id: moveDto.is_checkmate ? playerId : null,
+      game_state: isCheckmate ? "terminée" : "en_cours",
+      winner_id: isCheckmate ? playerId : null,
     });
+
+    // Mettre à jour le cache des positions
+    await GameService.updateGamePositions(gameId);
 
     return move;
   }
 
-  async getGameMoves(gameId: number): Promise<Move[]> {
+  async getGameMoves(gameId: number): Promise<MoveInterface[]> {
     return Move.findAll({
       where: { game_id: gameId },
       order: [["move_number", "ASC"]],

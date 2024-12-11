@@ -2,7 +2,7 @@ import sequelize from "./database";
 
 async function initDatabase() {
   try {
-    await sequelize.sync({ alter: true }); // alter: true permet de mettre à jour les tables existantes
+    await sequelize.sync({ alter: true });
     console.log("✅ Base de données synchronisée avec succès");
   } catch (error) {
     console.error(

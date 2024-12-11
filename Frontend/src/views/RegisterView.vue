@@ -3,92 +3,104 @@
     <div class="register-card">
       <h1 class="register-title">Créer un compte</h1>
 
-      <div class="register-info">
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <form @submit.prevent="handleRegister" class="register-info">
         <h2>Pseudo</h2>
         <div class="input-group">
           <input
-            v-model="username"
+            v-model="formData.username"
             type="text"
             class="register-input"
             placeholder="Entrez votre pseudo"
+            required
           />
         </div>
 
         <h2>Mail</h2>
         <div class="input-group">
           <input
-            v-model="email"
+            v-model="formData.email"
             type="email"
             class="register-input"
             placeholder="Entrez votre email"
+            required
           />
         </div>
 
-        <h2>Mots de Passe</h2>
+        <h2>Mot de passe</h2>
         <div class="input-group">
           <input
-            v-model="password"
+            v-model="formData.password"
             type="password"
             class="register-input"
             placeholder="Entrez votre mot de passe"
+            required
+            minlength="6"
           />
         </div>
 
-        <h2>Confirmation de Mots de Passe</h2>
+        <h2>Confirmation du mot de passe</h2>
         <div class="input-group">
           <input
-            v-model="confirmPassword"
+            v-model="formData.confirmPassword"
             type="password"
             class="register-input"
             placeholder="Confirmez votre mot de passe"
+            required
           />
         </div>
-      </div>
 
-      <button class="btn-register" @click="handleRegister">S'inscrire</button>
+        <button type="submit" class="btn-register" :disabled="isLoading">
+          {{ isLoading ? "Inscription en cours..." : "S'inscrire" }}
+        </button>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import "primeicons/primeicons.css";
+import { useUserService } from "@/composables/user/userService";
+import type { UserRegistration } from "@/types/user";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const username = ref("");
-const email = ref("");
-const password = ref("");
-const confirmPassword = ref("");
+const { register, error, isLoading } = useUserService();
+
+const formData = ref<UserRegistration>({
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+});
 
 const handleRegister = async () => {
-  if (password.value !== confirmPassword.value) {
-    alert("Les mots de passe ne correspondent pas");
-    return;
-  }
-
   try {
-    // Appel API pour l'inscription
-    const response = await fetch("http://localhost:3000/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username.value,
-        email: email.value,
-        password: password.value,
-      }),
-    });
-
-    if (response.ok) {
-      router.push("/login"); // Redirection vers la page de connexion après inscription
-    } else {
-      const error = await response.json();
-      alert(error.message || "Erreur lors de l'inscription");
-    }
-  } catch (error) {
-    alert("Erreur lors de l'inscription");
+    await register(formData.value);
+    router.push("/login");
+  } catch (err) {
+    // L'erreur est déjà gérée dans le service
+    console.error("Erreur d'inscription:", err);
   }
 };
 </script>
+
+<style scoped>
+.btn-register:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.error-message {
+  color: #ff4444;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(255, 68, 68, 0.1);
+  border-radius: 4px;
+}
+</style>

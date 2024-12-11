@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <nav class="navbar">
+    <nav class="navbar" v-if="showNav">
       <div class="navbar-brand">
         <router-link to="/">
           <img src="@/assets/Logo.png" alt="ChessApp Logo" class="logo" />
@@ -12,6 +12,11 @@
         <li>
           <router-link to="/profile"><i class="pi pi-user"></i></router-link>
         </li>
+        <li>
+          <a href="#" @click.prevent="handleLogout">
+            <i class="pi pi-sign-out"></i>
+          </a>
+        </li>
       </ul>
     </nav>
 
@@ -22,21 +27,27 @@
     <footer class="footer">
       <div class="footer-content">
         <p>&copy; 2024 ChessApp. Tous droits réservés.</p>
-        <ul class="footer-links">
-          <li><a href="#">Conditions d'utilisation</a></li>
-          <li><a href="#">Politique de confidentialité</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
       </div>
     </footer>
   </div>
 </template>
 
-<script lang="ts">
-import "primeicons/primeicons.css";
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { useAuth } from "@/composables/auth/useAuth";
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-export default defineComponent({
-  name: "App",
+const router = useRouter();
+const route = useRoute();
+const { logout } = useAuth();
+
+const showNav = computed(() => {
+  const publicRoutes = ["login", "register", "not-found"];
+  return !publicRoutes.includes(route.name as string);
 });
+
+const handleLogout = async () => {
+  await logout();
+  router.push("/login");
+};
 </script>

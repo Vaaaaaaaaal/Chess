@@ -2,7 +2,7 @@
   <div v-if="modelValue" class="modal-overlay">
     <div class="modal-content">
       <div class="vs-section">
-        <span class="player">{{ props.player1 }}</span>
+        <span class="player">{{ username }}</span>
         <span class="vs">VS</span>
         <span class="player">{{ props.player2 }}</span>
       </div>
@@ -30,16 +30,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const props = defineProps<{
   modelValue: boolean;
-  player1: string;
   player2: string;
-  // ... autres props existantes
 }>();
 
+const username = ref("");
 const visibility = ref("public");
+
+onMounted(() => {
+  username.value = sessionStorage.getItem("username") || "Joueur 1";
+});
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;

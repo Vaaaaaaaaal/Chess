@@ -16,37 +16,32 @@ interface JwtPayload {
 
 export function expressAuthentication(
   request: express.Request,
-
   securityName: string,
   scopes?: string[]
 ): Promise<JwtPayload> {
   if (securityName === "jwt") {
-    console.log("Request headers:", request);
-    if (request?.headers["authorization"] === undefined) {
+    const authHeader = request.headers["authorization"];
+    if (!authHeader) {
       return Promise.reject(new Error("Header d'autorisation manquant"));
     }
 
-    const authHeader = request.headers["authorization"] as string;
-    console.log("Auth header:", authHeader);
-
-    const cleanedHeader = authHeader.replace(/^Bearer\s+Bearer\s+/, "Bearer ");
-    const parts = cleanedHeader.split(" ");
-    console.log("Auth parts:", parts);
-
-    if (parts.length !== 2 || parts[0] !== "Bearer") {
-      return Promise.reject(new Error("Format d'autorisation invalide"));
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+      return Promise.reject(new Error("Token manquant"));
     }
-
-    const token = parts[1];
-    console.log("Token:", token);
 
     return new Promise((resolve, reject) => {
       jwt.verify(token, JWT_SECRET, (err: Error | null, decoded: any) => {
         if (err) {
-          console.log("JWT verify error:", err);
-          reject(err);
+          console.log("Erreur de vérification du token:", err);
+          reject(new Error("Token invalide"));
         } else if (decoded) {
-          console.log("Decoded token:", decoded);
+          console.log("Token décodé:", decoded);
+          // S'assurer que l'ID est correctement extrait du token
+          const userId = decoded.id || decoded.sub || decoded.userId;
+          (request as AuthenticatedRequest).user = {
+            id: userId,
+          };
           resolve(decoded as JwtPayload);
         } else {
           reject(new Error("Token invalide"));

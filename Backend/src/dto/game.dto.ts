@@ -1,16 +1,16 @@
 export interface CreateGameDto {
-  guest_username: string;
-  starter: boolean;
+  username2: string;
+  who_start: boolean;
+  game_state?: string;
 }
 
 export interface GameResponse {
   id: number;
   player1_id: number;
-  player2_id?: number | null;
-  guest_username: string;
-  status: "pending" | "active" | "completed" | "abandoned";
+  username2: string;
+  winner_id: number | null;
   is_public: boolean;
-  current_turn: number;
-  starter: boolean;
   created_at: Date;
+  game_state: any;
+  who_start: boolean;
 }

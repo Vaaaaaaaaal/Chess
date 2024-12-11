@@ -1,18 +1,15 @@
 import { DataTypes, Model } from "sequelize";
-import sequelize from "../config/database";
-import User from "./user.model";
+import db from "../config/database";
 
 class Game extends Model {
   public id!: number;
   public player1_id!: number;
-  public player2_id!: number | null;
+  public username2!: string;
   public winner_id!: number | null;
   public is_public!: boolean;
-  public status!: "pending" | "active" | "completed" | "abandoned";
-  public current_turn!: number;
   public game_state!: string;
   public created_at!: Date;
-  public updated_at!: Date;
+  public who_start!: boolean;
 }
 
 Game.init(
@@ -25,66 +22,36 @@ Game.init(
     player1_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: User,
-        key: "id",
-      },
     },
-    player2_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: User,
-        key: "id",
-      },
+    username2: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     winner_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      references: {
-        model: User,
-        key: "id",
-      },
     },
     is_public: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    status: {
-      type: DataTypes.ENUM("pending", "active", "completed", "abandoned"),
-      defaultValue: "pending",
-    },
-    current_turn: {
-      type: DataTypes.INTEGER,
-      defaultValue: 1, // 1 pour player1, 2 pour player2
+      defaultValue: true,
     },
     game_state: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
       allowNull: false,
-      get() {
-        const rawValue = this.getDataValue("game_state");
-        return rawValue ? JSON.parse(rawValue) : null;
-      },
-      set(value) {
-        this.setDataValue("game_state", JSON.stringify(value));
-      },
     },
     created_at: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      allowNull: false,
     },
-    updated_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+    who_start: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
     },
   },
   {
-    sequelize,
-    modelName: "Game",
+    sequelize: db,
     tableName: "games",
-    timestamps: true,
-    updatedAt: "updated_at",
-    createdAt: "created_at",
+    timestamps: false,
   }
 );
 
