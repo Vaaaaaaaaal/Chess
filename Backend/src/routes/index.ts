@@ -91,7 +91,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "username2": {"dataType":"string","required":true},
             "who_start": {"dataType":"boolean","required":true},
-            "game_state": {"dataType":"string"},
+            "is_public": {"dataType":"boolean","required":true},
         },
         "additionalProperties": false,
     },

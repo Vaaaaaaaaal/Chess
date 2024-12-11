@@ -6,19 +6,22 @@
         :key="col"
         :class="[
           'board-cell',
-          getCellColor(row, col),
+          getCellColor(9 - row, col),
           {
             'selected-piece':
-              selectedPiece?.row === row && selectedPiece?.col === col,
+              selectedPiece?.row === 9 - row && selectedPiece?.col === col,
             'possible-move': possibleMoves.some(
-              (move) => move.row === row && move.col === col
+              (move) => move.row === 9 - row && move.col === col
             ),
           },
         ]"
-        @click="handleCellClick(row, col)"
+        @click="handleCellClick(9 - row, col)"
       >
-        <div v-if="getPiece(row, col)" class="piece">
-          <img :src="getPiece(row, col)" :alt="getPieceType(row, col)" />
+        <div v-if="getPiece(9 - row, col)" class="piece">
+          <img
+            :src="getPiece(9 - row, col)"
+            :alt="getPieceType(9 - row, col)"
+          />
         </div>
       </div>
     </div>
@@ -28,7 +31,6 @@
     </div>
 
     <div class="row-labels">
-      <span v-for="row in 8" :key="row">{{ 9 - row }}</span>
       <span v-for="row in 8" :key="row">{{ 9 - row }}</span>
     </div>
   </div>

@@ -178,13 +178,14 @@
 					"who_start": {
 						"type": "boolean"
 					},
-					"game_state": {
-						"type": "string"
+					"is_public": {
+						"type": "boolean"
 					}
 				},
 				"required": [
 					"username2",
-					"who_start"
+					"who_start",
+					"is_public"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -911,7 +912,12 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Record_string._type-string--color-string__"
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/Record_string._type-string--color-string__"
+										},
+										{}
+									]
 								}
 							}
 						}
