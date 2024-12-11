@@ -250,6 +250,26 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"Record_string._type-string--color-string__": {
+				"properties": {},
+				"additionalProperties": {
+					"properties": {
+						"color": {
+							"type": "string"
+						},
+						"type": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"color",
+						"type"
+					],
+					"type": "object"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
 			"RegisterResponse": {
 				"properties": {
 					"message": {
@@ -880,6 +900,82 @@
 						}
 					}
 				}
+			}
+		},
+		"/games/{gameId}/positions": {
+			"get": {
+				"operationId": "GetGamePositions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Record_string._type-string--color-string__"
+								}
+							}
+						}
+					},
+					"304": {
+						"description": "Positions non modifiées",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Partie non trouvée",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Games"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "gameId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "header",
+						"name": "if-none-match",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/auth/register": {
