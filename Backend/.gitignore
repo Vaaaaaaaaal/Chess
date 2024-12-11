@@ -35,8 +35,7 @@ Thumbs.db
 *.temp
 
 # Fichier de base de données SQLite
-*.db
-*.sqlite
+
 
 # Fichiers de configuration spécifiques à l'utilisateur
 *.log

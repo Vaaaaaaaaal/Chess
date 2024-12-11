@@ -2,7 +2,7 @@ import type { Move as MoveInterface } from "../dto/move.dto";
 import { MoveDto } from "../dto/move.dto";
 import Game from "../models/game.model";
 import Move from "../models/move.model";
-import GameService from "./game.service";
+import { gameService } from "./game.service";
 
 class MoveService {
   async createMove(
@@ -16,7 +16,7 @@ class MoveService {
     }
 
     // Vérifier si le mouvement est valide
-    const possibleMoves = await GameService.getPossibleMoves(
+    const possibleMoves = await gameService.getPossibleMoves(
       gameId,
       moveDto.from_position
     );
@@ -27,7 +27,7 @@ class MoveService {
     const moveCount = await Move.count({ where: { game_id: gameId } });
 
     // Simuler le mouvement pour vérifier l'échec
-    const currentPositions = await GameService.getCurrentPositions(gameId);
+    const currentPositions = await gameService.getCurrentPositions(gameId);
     const piece = currentPositions[moveDto.from_position];
     const simulatedPositions = { ...currentPositions };
     delete simulatedPositions[moveDto.from_position];
@@ -35,12 +35,12 @@ class MoveService {
 
     // Vérifier si le mouvement met l'adversaire en échec
     const opponentColor = piece.color === "white" ? "black" : "white";
-    const isCheck = await GameService.isKingInCheck(gameId, opponentColor);
+    const isCheck = await gameService.isKingInCheck(gameId, opponentColor);
 
     // Vérifier si c'est un échec et mat
     let isCheckmate = false;
     if (isCheck) {
-      isCheckmate = await GameService.isCheckmate(gameId, opponentColor);
+      isCheckmate = await gameService.isCheckmate(gameId, opponentColor);
     }
 
     const move = await Move.create({
@@ -61,7 +61,7 @@ class MoveService {
     });
 
     // Mettre à jour le cache des positions
-    await GameService.updateGamePositions(gameId);
+    await gameService.updateGamePositions(gameId);
 
     return move;
   }
