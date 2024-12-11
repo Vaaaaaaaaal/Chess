@@ -4,7 +4,14 @@
       <div
         v-for="col in 8"
         :key="col"
-        :class="['board-cell', getCellColor(row, col)]"
+        :class="[
+          'board-cell',
+          getCellColor(row, col),
+          {
+            'selected-piece': selectedPiece?.row === row && selectedPiece?.col === col,
+            'possible-move': possibleMoves.includes(`${columns[col - 1]}${9 - row}`)
+          }
+        ]"
         @click="handleCellClick(row, col)"
       >
         <div v-if="getPiece(row, col)" class="piece">
@@ -37,6 +44,7 @@ import WhiteKnight from "../assets/chessIcon/WhiteKnight.png";
 import WhitePawn from "../assets/chessIcon/WhitePawn.png";
 import WhiteQueen from "../assets/chessIcon/WhiteQueen.png";
 import WhiteRook from "../assets/chessIcon/WhiteRook.png";
+import { gameService } from "../services/game.service";
 
 const columns = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -58,6 +66,9 @@ const pieces = ref({
     pawn: BlackPawn,
   },
 });
+
+const selectedPiece = ref<{ row: number; col: number } | null>(null);
+const possibleMoves = ref<string[]>([]);
 
 const getCellColor = (row: number, col: number): string => {
   return (row + col) % 2 === 0 ? "white-cell" : "red-cell";
@@ -147,14 +158,22 @@ const getPieceType = (row: number, col: number): string => {
   return "";
 };
 
-const handleCellClick = (row: number, col: number) => {
-  const pieceType = getPieceType(row, col);
-  if (pieceType) {
-    console.log(
-      `Pièce sélectionnée: ${pieceType} à la position ${columns[col - 1]}${
-        9 - row
-      }`
-    );
+const handleCellClick = async (row: number, col: number) => {
+  const position = `${columns[col - 1]}${9 - row}`;
+  const gameId = parseInt(sessionStorage.getItem("currentGameId") || "0");
+  
+  if (gameId && getPiece(row, col)) {
+    try {
+      const moves = await gameService.getPossibleMoves(gameId, position);
+      console.log(`Mouvements possibles pour ${position}:`, moves);
+      selectedPiece.value = { row, col };
+      possibleMoves.value = moves;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des mouvements:", error);
+    }
+  } else {
+    selectedPiece.value = null;
+    possibleMoves.value = [];
   }
 };
 </script>

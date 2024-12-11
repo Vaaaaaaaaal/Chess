@@ -45,4 +45,19 @@ export const gameService = {
       throw error;
     }
   },
+
+  async getPossibleMoves(gameId: number, position: string): Promise<string[]> {
+    try {
+      const response = await axiosInstance.get<string[]>(
+        `/games/${gameId}/possible-moves/${position.toLowerCase()}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Erreur lors de la récupération des mouvements possibles:",
+        error
+      );
+      return [];
+    }
+  },
 };
