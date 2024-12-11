@@ -14,8 +14,8 @@
         ]"
         @click="handleCellClick(row, col)"
       >
-        <div v-if="getPiece(row, col)" class="piece">
-          <img :src="getPiece(row, col)" :alt="getPiece(row, col)" />
+        <div v-if="getPiece(9 - row, col)" class="piece">
+          <img :src="getPiece(9 - row, col)" :alt="getPiece(9 - row, col)" />
         </div>
       </div>
     </div>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="row-labels">
-      <span v-for="row in 8" :key="row">{{ row }}</span>
+      <span v-for="row in 8" :key="row">{{ 9 - row }}</span>
     </div>
   </div>
 </template>
@@ -78,7 +78,7 @@ const getCellColor = (row: number, col: number): string => {
 };
 
 const getPiece = (row: number, col: number): string => {
-  if (row === 8) {
+  if (row === 1) {
     switch (col) {
       case 1:
       case 8:
@@ -95,9 +95,9 @@ const getPiece = (row: number, col: number): string => {
         return pieces.value.white.king;
     }
   }
-  if (row === 7) return pieces.value.white.pawn;
+  if (row === 2) return pieces.value.white.pawn;
 
-  if (row === 1) {
+  if (row === 8) {
     switch (col) {
       case 1:
       case 8:
@@ -114,14 +114,14 @@ const getPiece = (row: number, col: number): string => {
         return pieces.value.black.king;
     }
   }
-  if (row === 2) return pieces.value.black.pawn;
+  if (row === 7) return pieces.value.black.pawn;
 
   return "";
 };
 
 const getChessNotation = (row: number, col: number): string => {
   const file = String.fromCharCode(97 + col - 1); // 'a' à 'h'
-  const rank = 9 - row; // 1 à 8
+  const rank = 9 - row; // Inverse la numérotation des rangs
   return `${file}${rank}`;
 };
 
