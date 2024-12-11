@@ -14,7 +14,7 @@ import {
 import { CreateGameDto, GameResponse } from "../dto/game.dto";
 import { Move, MoveDto } from "../dto/move.dto";
 import { AuthenticatedRequest } from "../middleware/auth.middleware";
-import GameService from "../services/game.service";
+import { gameService } from "../services/game.service";
 import MoveService from "../services/move.service";
 
 @Route("games")
@@ -32,7 +32,7 @@ export class GameController extends Controller {
         throw new Error("Utilisateur non authentifié");
       }
 
-      const game = await GameService.createGame(request.user.id, createGameDto);
+      const game = await gameService.createGame(request.user.id, createGameDto);
 
       return {
         id: game.id,
@@ -55,7 +55,7 @@ export class GameController extends Controller {
   @Get("{id}")
   public async getGame(@Path() id: number): Promise<GameResponse> {
     try {
-      const game = await GameService.getGameById(id);
+      const game = await gameService.getGameById(id);
 
       if (!game) {
         this.setStatus(404);
@@ -83,8 +83,8 @@ export class GameController extends Controller {
   @Get("cache/status")
   public async getCacheStatus() {
     try {
-      const cacheContent = await GameService.getCacheContent();
-      const cacheStats = await GameService.getCacheStats();
+      const cacheContent = await gameService.getCacheContent();
+      const cacheStats = await gameService.getCacheStats();
 
       return {
         content: cacheContent,
@@ -109,7 +109,7 @@ export class GameController extends Controller {
     @Path() position: string
   ): Promise<string[]> {
     try {
-      const game = await GameService.getGameById(gameId);
+      const game = await gameService.getGameById(gameId);
       if (!game) {
         this.setStatus(404);
         throw new Error("Partie non trouvée");
@@ -120,7 +120,7 @@ export class GameController extends Controller {
         throw new Error("Position invalide");
       }
 
-      return await GameService.getPossibleMoves(gameId, position);
+      return await gameService.getPossibleMoves(gameId, position);
     } catch (error) {
       this.setStatus(500);
       throw error;
@@ -146,7 +146,7 @@ export class GameController extends Controller {
         throw new Error("Utilisateur non authentifié");
       }
 
-      const game = await GameService.getGameById(gameId);
+      const game = await gameService.getGameById(gameId);
       if (!game) {
         this.setStatus(404);
         throw new Error("Partie non trouvée");
@@ -171,14 +171,14 @@ export class GameController extends Controller {
     @Header("if-none-match") ifNoneMatch?: string
   ): Promise<Record<string, { type: string; color: string }> | void> {
     try {
-      const game = await GameService.getGameById(gameId);
+      const game = await gameService.getGameById(gameId);
       if (!game) {
         this.setStatus(404);
         throw new Error("Partie non trouvée");
       }
 
       // Récupérer les positions en cache
-      const cachedPositions = await GameService.getCachedPositions(gameId);
+      const cachedPositions = await gameService.getCachedPositions(gameId);
       console.log("Cache key:", `game_positions_${gameId}`);
       console.log("Cached positions:", cachedPositions);
 
@@ -190,18 +190,16 @@ export class GameController extends Controller {
         console.log("Received If-None-Match:", ifNoneMatch);
 
         if (ifNoneMatch === etag) {
+          console.log("Cache hit");
           this.setStatus(304);
-          this.setHeader("ETag", etag);
-          return;
         }
-
         this.setHeader("ETag", etag);
         return cachedPositions;
       }
 
       console.log("No cache found, calculating positions...");
-      const positions = await GameService.calculatePiecesPositions(gameId);
-      await GameService.setCachedPositions(gameId, positions);
+      const positions = await gameService.calculatePiecesPositions(gameId);
+      await gameService.setCachedPositions(gameId, positions);
 
       const etag = `"${Buffer.from(JSON.stringify(positions)).toString(
         "base64"
