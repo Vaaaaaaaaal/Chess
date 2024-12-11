@@ -8,9 +8,12 @@
           'board-cell',
           getCellColor(row, col),
           {
-            'selected-piece': selectedPiece?.row === row && selectedPiece?.col === col,
-            'possible-move': possibleMoves.includes(`${columns[col - 1]}${9 - row}`)
-          }
+            'selected-piece':
+              selectedPiece?.row === row && selectedPiece?.col === col,
+            'possible-move': possibleMoves.some(
+              (move) => move.row === row && move.col === col
+            ),
+          },
         ]"
         @click="handleCellClick(row, col)"
       >
@@ -68,7 +71,7 @@ const pieces = ref({
 });
 
 const selectedPiece = ref<{ row: number; col: number } | null>(null);
-const possibleMoves = ref<string[]>([]);
+const possibleMoves = ref<{ row: number; col: number }[]>([]);
 
 const getCellColor = (row: number, col: number): string => {
   return (row + col) % 2 === 0 ? "white-cell" : "red-cell";
@@ -161,13 +164,24 @@ const getPieceType = (row: number, col: number): string => {
 const handleCellClick = async (row: number, col: number) => {
   const position = `${columns[col - 1]}${9 - row}`;
   const gameId = parseInt(sessionStorage.getItem("currentGameId") || "0");
-  
+
   if (gameId && getPiece(row, col)) {
     try {
       const moves = await gameService.getPossibleMoves(gameId, position);
       console.log(`Mouvements possibles pour ${position}:`, moves);
+
+      // Convertir les positions en coordonnées de la grille
+      const convertedMoves = moves.map((move) => {
+        const file = move.charAt(0).toUpperCase();
+        const rank = parseInt(move.charAt(1));
+        const colIndex = columns.indexOf(file) + 1;
+        const rowIndex = 9 - rank;
+        return { row: rowIndex, col: colIndex };
+      });
+
+      console.log("Cases correspondantes:", convertedMoves);
       selectedPiece.value = { row, col };
-      possibleMoves.value = moves;
+      possibleMoves.value = convertedMoves;
     } catch (error) {
       console.error("Erreur lors de la récupération des mouvements:", error);
     }
@@ -177,3 +191,74 @@ const handleCellClick = async (row: number, col: number) => {
   }
 };
 </script>
+
+<style scoped>
+.chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, 60px);
+  grid-template-rows: repeat(8, 60px);
+  border: 2px solid #333;
+  position: relative;
+}
+
+.board-row {
+  display: contents;
+}
+
+.board-cell {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.white-cell {
+  background-color: #fff;
+}
+
+.red-cell {
+  background-color: #ff9999;
+}
+
+.piece {
+  width: 50px;
+  height: 50px;
+  z-index: 2;
+}
+
+.possible-move::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background-color: rgba(0, 255, 0, 0.5);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.selected-piece {
+  background-color: rgba(255, 255, 0, 0.3) !important;
+}
+
+.col-labels {
+  display: flex;
+  justify-content: space-around;
+  padding: 5px 30px;
+}
+
+.row-labels {
+  position: absolute;
+  left: -25px;
+  top: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+</style>
