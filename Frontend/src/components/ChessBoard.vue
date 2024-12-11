@@ -194,11 +194,13 @@ const handleCellClick = async (row: number, col: number) => {
 
 <style scoped>
 .chess-board {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(8, 60px);
   grid-template-rows: repeat(8, 60px);
   border: 2px solid #333;
-  position: relative;
+  width: 480px;
+  height: 480px;
 }
 
 .board-row {
@@ -223,9 +225,15 @@ const handleCellClick = async (row: number, col: number) => {
 }
 
 .piece {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   z-index: 2;
+}
+
+.piece img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .possible-move::before {
@@ -246,19 +254,21 @@ const handleCellClick = async (row: number, col: number) => {
 }
 
 .col-labels {
+  position: absolute;
+  bottom: -25px;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-around;
-  padding: 5px 30px;
 }
 
 .row-labels {
   position: absolute;
   left: -25px;
   top: 0;
-  height: 100%;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  align-items: center;
 }
 </style>
