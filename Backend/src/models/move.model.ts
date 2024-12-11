@@ -71,6 +71,9 @@ Move.init(
     promotion: {
       type: DataTypes.STRING(10),
       allowNull: true,
+      validate: {
+        isIn: [["queen", "rook", "bishop", "knight"]],
+      },
     },
   },
   {
