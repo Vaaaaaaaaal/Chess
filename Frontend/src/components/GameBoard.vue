@@ -1,23 +1,25 @@
 <template>
   <div id="main" class="flex flex-column gap-4">
-    <div id="pieceKilled">
-      <h2 style="color: white">Pièces prises</h2>
+    <div id="pieceKilled" class="piece-killed-container">
+      <h2>Pièces prises</h2>
       <div class="flex all-piece-killed">
         <CapturedPieces
           :pieces="blackKilledPieces"
           color="BLACK"
+          class="captured-pieces-section"
         />
         <CapturedPieces
           :pieces="whiteKilledPieces"
           color="WHITE"
+          class="captured-pieces-section"
         />
       </div>
     </div>
 
-    <div id="damier" class="p-4">
+    <div id="damier" class="board-container">
       <div 
         class="chess-board" 
-        :class="[colorPlayer === 'Noirs' ? 'chess-board-rotate' : '']"
+        :class="boardClasses"
       >
         <div v-for="row in 8" :key="'row-' + row" class="flex">
           <ChessCell
@@ -187,3 +189,47 @@ const handleMove = async (moveData: GameMoveDTO) => {
   }
 };
 </script>
+
+<style scoped>
+.board-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.piece-killed-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.captured-pieces-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .board-container {
+    padding: 0.5rem;
+  }
+
+  .piece-killed-container {
+    padding: 0.25rem;
+  }
+
+  .captured-pieces-section {
+    gap: 0.25rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    margin: 0.5rem 0;
+  }
+}
+</style>
