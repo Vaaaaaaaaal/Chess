@@ -207,3 +207,19 @@ function getPieceValue(piece: Piece): number {
       return 0;
   }
 }
+
+function handleAbandonedGame(game: Game, userId: number): void {
+  // Marquer la partie comme abandonnée
+  game.setStatus("ABANDONED");
+
+  // Envoyer une notification aux joueurs
+  notifyPlayers(game, "La partie a été abandonnée.");
+
+  // Supprimer la partie du stockage si nécessaire
+  deleteGameStorage(userId);
+}
+
+function notifyPlayers(game: Game, message: string): void {
+  // Logique pour envoyer une notification aux joueurs
+  console.log(`Notification aux joueurs: ${message}`);
+}
