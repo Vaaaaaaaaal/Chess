@@ -233,19 +233,14 @@ const handleGameResult = (game: GameModel, row: number, col: number) => {
         case ResultPossible.KINGLOSE:
           gameOverMessage.value = `Les ${color === Color.BLACK ? 'Blancs' : 'Noirs'} ont gagné !`;
           showGameOverDialog.value = true;
-          return;
+          break;
 
         case ResultPossible.PROMOTION:
           if (row === -1 || col === -1) return;
           promotionPosition.value = { i: row - 1, j: col - 1 };
-          availablePromotionPieces.value =
-            color === Color.BLACK
-              ? blackKilledPieces.value
-                  .filter((piece) => piece != PieceType.PAWN)
-                  .map((piece) => `BLACK_${piece}` as FullPieceProperty)
-              : whiteKilledPieces.value
-                  .filter((piece) => piece != PieceType.PAWN)
-                  .map((piece) => `WHITE_${piece}` as FullPieceProperty);
+          availablePromotionPieces.value = color === Color.BLACK
+            ? blackKilledPieces.value.filter((piece) => piece != PieceType.PAWN).map((piece) => `BLACK_${piece}` as FullPieceProperty)
+            : whiteKilledPieces.value.filter((piece) => piece != PieceType.PAWN).map((piece) => `WHITE_${piece}` as FullPieceProperty);
           showPromotionDialog.value = true;
           break;
 
@@ -254,6 +249,7 @@ const handleGameResult = (game: GameModel, row: number, col: number) => {
             severity: 'warn',
             summary: 'Attention',
             detail: 'Votre roi est en danger ! Vous devez le déplacer.',
+            life: 3000,
           });
           break;
       }
