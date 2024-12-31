@@ -13,7 +13,6 @@ import { ChessRules } from "./rules/ChessRules";
 export function movePiece(
   game: Game,
   i: number,
-  j: number,
   toI: number,
   toJ: number
 ): MovePieceResult {
