@@ -24,6 +24,7 @@ import { ReturnGameAction } from "../interfaces/returnGameAction.interface";
 import { Game } from "../models/game.model";
 import { GameAction } from "../models/gameAction.model";
 import { User } from "../models/user.model";
+import { calculateElo } from "../utils/eloCalculator";
 
 export class GameService {
   async createGame(
@@ -248,6 +249,26 @@ export class GameService {
     if (!piece) return;
 
     return piece.possibleMove(game.getListCase());
+  }
+
+  async updateEloRankings(gameResult: GameResult) {
+    const player1 = await getPlayerById(gameResult.player1Id);
+    const player2 = await getPlayerById(gameResult.player2Id);
+
+    const player1NewRating = calculateElo(
+      player1.eloRating,
+      player2.eloRating,
+      gameResult.resultForPlayer1
+    );
+
+    const player2NewRating = calculateElo(
+      player2.eloRating,
+      player1.eloRating,
+      gameResult.resultForPlayer2
+    );
+
+    await updatePlayerElo(player1.id, player1NewRating);
+    await updatePlayerElo(player2.id, player2NewRating);
   }
 }
 
