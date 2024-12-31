@@ -210,18 +210,3 @@ const removePieceColor = (pieceType: FullPieceProperty): PieceType => {
   return pieceType.split('_')[1] as PieceType;
 };
 </script>
-
-<style scoped>
-.board-cell {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ccc;
-}
-
-.highlight {
-  background-color: rgba(0, 255, 0, 0.3);
-}
-</style>
