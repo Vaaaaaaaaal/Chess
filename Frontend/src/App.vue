@@ -1,42 +1,64 @@
 <template>
-  <nav class="main-nav">
-    <Logo />
-    <div class="nav-links">
-      <RouterLink to="/" class="nav-link">Accueil</RouterLink>
-      <RouterLink to="/stats" class="nav-link">Statistiques</RouterLink>
-    </div>
-  </nav>
-  <RouterView />
+  <Toast />
+
+  <div class="layout">
+    <AppMenu />
+
+    <main>
+      <RouterView />
+    </main>
+
+    <footer class="footer">
+      <div class="footer-content">
+        <p>&copy; 2024 ChessApp. Tous droits réservés.</p>
+      </div>
+    </footer>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
-import Logo from './components/Logo.vue';
+import Toast from 'primevue/toast';
+import AppMenu from './AppMenu.vue';
 </script>
 
-<style scoped>
-.main-nav {
+<style>
+main {
+  padding-bottom: 60px; /* Ajouter un padding pour éviter que le contenu ne soit caché par le footer */
+}
+
+.footer {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  padding: 1rem 0;
+  margin-top: 1rem; /* Ajouté un petit espace au-dessus du footer */
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0 2rem;
 }
 
-.nav-links {
+.footer-links {
+  list-style-type: none;
   display: flex;
-  gap: 2rem;
+  padding: 0;
 }
 
-.nav-link {
+.footer-links li {
+  margin-left: 1rem;
+}
+
+.footer-links a {
+  color: #e0e0e0;
   text-decoration: none;
-  color: #2c3e50;
-  font-weight: 500;
-  transition: color 0.3s ease;
+  transition: color 0.3s;
 }
 
-.nav-link:hover {
-  color: #42b883;
+.footer-links a:hover {
+  color: #ff6b6b;
 }
 </style>

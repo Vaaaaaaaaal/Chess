@@ -1,35 +1,69 @@
-import { getLeaderboardData } from '@/api/leaderboard';
-import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import type { HistoryModel } from '@/model/History.model';
+import type { LeaderboardModel } from '@/model/Leaderboard.model';
+import type { StatsModel } from '@/model/Stats.model';
+import { useLeaderboardApi } from './leaderboardApi';
 
+const leaderboardApi = useLeaderboardApi();
 export function useLeaderboardService() {
-  const leaderboard = ref([]);
-  const loading = ref(true);
-  const toast = useToast();
-
-  const getLeaderboard = async () => {
+  const getUserStats = async (userId: number): Promise<StatsModel> => {
+    console.log('Début getUserStats avec userId:', userId);
     try {
-      loading.value = true;
-      const response = await getLeaderboardData();
-      leaderboard.value = response.map(player => ({
-        ...player,
-        elo: player.eloRating
-      }));
+      const response = await leaderboardApi.getUserStats(userId);
+      console.log('Réponse getUserStats:', response);
+      return response;
     } catch (error) {
-      toast.add({
-        severity: 'error',
-        summary: 'Erreur',
-        detail: 'Impossible de charger le classement',
-        life: 3000,
-      });
-    } finally {
-      loading.value = false;
+      console.error('Erreur dans getUserStats:', error);
+      throw error;
+    }
+  };
+
+  const getMyStats = async (): Promise<StatsModel> => {
+    console.log('Début getMyStats');
+    try {
+      const response = await leaderboardApi.getMyStats();
+      console.log('Réponse getMyStats:', response);
+      return response;
+    } catch (error) {
+      console.error('Erreur dans getMyStats:', error);
+      throw error;
     }
   };
 
   return {
-    leaderboard,
-    loading,
-    getLeaderboard
+    async getLeaderboard(): Promise<LeaderboardModel[]> {
+      console.log('Appel getLeaderboard');
+      try {
+        const response = await leaderboardApi.leaderboard();
+        console.log('Réponse getLeaderboard:', response);
+        return response;
+      } catch (error) {
+        console.error('Erreur dans getLeaderboard:', error);
+        throw error;
+      }
+    },
+    async getConnectedUserHistory(): Promise<HistoryModel[]> {
+      console.log('Appel getConnectedUserHistory');
+      try {
+        const response = await leaderboardApi.connectedUserHistory();
+        console.log('Réponse getConnectedUserHistory:', response);
+        return response;
+      } catch (error) {
+        console.error('Erreur dans getConnectedUserHistory:', error);
+        throw error;
+      }
+    },
+    async getUserHistory(userId: number): Promise<HistoryModel[]> {
+      console.log('Appel getUserHistory avec userId:', userId);
+      try {
+        const response = await leaderboardApi.historyUser(userId);
+        console.log('Réponse getUserHistory:', response);
+        return response;
+      } catch (error) {
+        console.error('Erreur dans getUserHistory:', error);
+        throw error;
+      }
+    },
+    getUserStats,
+    getMyStats,
   };
 }

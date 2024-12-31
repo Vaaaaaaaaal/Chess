@@ -24,7 +24,7 @@
               :rows="10"
               :rowsPerPageOptions="[5, 10, 20]"
               filterDisplay="menu"
-              :globalFilterFields="['username', 'score', 'rank', 'elo']"
+              :globalFilterFields="['username', 'score', 'rank']"
             >
               <Column field="rank" header="Position" :sortable="true">
                 <template #body="{ data }">
@@ -45,10 +45,10 @@
                 </template>
               </Column>
 
-              <Column field="elo" header="Classement Elo" :sortable="true">
+              <Column field="score" header="Score" :sortable="true">
                 <template #body="{ data }">
                   <div class="flex align-items-center">
-                    <Tag :severity="getScoreSeverity(data.elo)" :value="data.elo.toString()" />
+                    <Tag :severity="getScoreSeverity(data.score)" :value="data.score.toString()" />
                   </div>
                 </template>
               </Column>
@@ -77,13 +77,13 @@ import Card from 'primevue/card';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import Menu from 'primevue/menu';
-import type { MenuItem } from 'primevue/menuitem';
 import ProgressSpinner from 'primevue/progressspinner';
 import Tag from 'primevue/tag';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import type { MenuItem } from 'primevue/menuitem';
 
 const { getLeaderboard } = useLeaderboardService();
 const leaderboard = ref<LeaderboardModel[]>([]);

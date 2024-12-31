@@ -1,58 +1,99 @@
 <template>
   <div id="main" class="flex flex-column gap-4">
-    <div id="pieceKilled" class="piece-killed-container">
-      <h2>Pièces prises</h2>
+    <div id="pieceKilled">
+      <h2 style="color: white">Pièces prises</h2>
       <div class="flex all-piece-killed">
-        <CapturedPieces
-          :pieces="blackKilledPieces"
-          color="BLACK"
-          class="captured-pieces-section"
-        />
-        <CapturedPieces
-          :pieces="whiteKilledPieces"
-          color="WHITE"
-          class="captured-pieces-section"
-        />
-      </div>
-    </div>
-
-    <div id="damier" class="board-container">
-      <div 
-        class="chess-board" 
-        :class="boardClasses"
-      >
-        <div v-for="row in 8" :key="'row-' + row" class="flex">
-          <ChessCell
-            v-for="col in 8"
-            :key="'cell-' + row + '-' + col"
-            :row="row"
-            :col="col"
-            :piece="board[row - 1][col - 1]?.piece"
-            :colorPlayer="colorPlayer"
-            :isPossibleMove="isPossibleMove(row - 1, col - 1)"
-            :isSelected="isSelectedCell(row - 1, col - 1)"
-            :isLastMoveFrom="isLastMoveFrom(row - 1, col - 1)"
-            :isLastMoveTo="isLastMoveTo(row - 1, col - 1)"
-            :isMoving="isMovingPiece(row - 1, col - 1)"
-            :isCaptured="isCapturedPiece(row - 1, col - 1)"
-            :isReplayMode="isReplayMode"
-            @click="handleCellClick"
-          />
+        <div class="list-piece-killed">
+          <div
+            v-for="piece in blackKilledPieces"
+            :key="piece"
+            class="piece piece-black"
+            v-html="getPieceSVG(`BLACK_${piece}` as FullPieceProperty)"
+          ></div>
+        </div>
+        <div class="list-piece-killed">
+          <div
+            v-for="piece in whiteKilledPieces"
+            class="piece list-piece-killed"
+            v-html="getPieceSVG(`WHITE_${piece}` as FullPieceProperty)"
+            :key="piece"
+          ></div>
         </div>
       </div>
     </div>
 
-    <PromotionDialog
-      v-model:visible="showPromotionDialogLocal"
-      :availablePieces="availablePromotionPieces"
-      @promote="handlePromotion"
-    />
+    <div id="damier" class="p-4">
+      <div class="chess-board" :class="[colorPlayer === 'Noirs' ? 'chess-board-rotate' : '']">
+        <div v-for="row in 8" :key="'row-' + row" class="flex">
+          <div
+            v-for="col in 8"
+            :key="'cell-' + row + '-' + col"
+            :class="[
+              'chess-cell cursor-pointer',
+              (row + col) % 2 === 0 ? 'bg-white' : 'noir',
+              {
+                'possible-move': isPossibleMove(row - 1, col - 1) && selectedPiece,
+                'selected-cell': isSelectedCell(row - 1, col - 1),
+                'last-move-from': isLastMoveFrom(row - 1, col - 1),
+                'last-move-to': isLastMoveTo(row - 1, col - 1),
+              },
+            ]"
+            @click="!isReplayMode && handleCellClick(row, col)"
+          >
+            <span
+              v-if="col === (colorPlayer === 'Noirs' ? 8 : 1)"
+              :class="['topleft', (row + col) % 2 === 0 ? 'text-noir' : 'text-white']"
+            >
+              {{ 9 - row }}
+            </span>
 
-    <GameOverDialog
+            <span
+              v-if="row === (colorPlayer === 'Noirs' ? 1 : 8)"
+              :class="['bottomleft', (row + col) % 2 === 0 ? 'text-noir' : 'text-white']"
+            >
+              {{ String.fromCharCode(96 + col) }}
+            </span>
+            <div
+              v-if="board[row - 1][col - 1]?.piece"
+              class="piece"
+              :class="{ 'piece-black': board[row - 1][col - 1]?.piece?.color === 'BLACK' }"
+              v-html="getPieceSVG(getPieceFullProperty(board[row - 1][col - 1]?.piece!))"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale de promotion -->
+    <Dialog
+      v-model:visible="showPromotionDialogLocal"
+      modal
+      header="Choisissez une pièce"
+      :closable="false"
+    >
+      <div class="flex justify-content-center gap-4">
+        <div
+          v-for="piece in availablePromotionPieces"
+          :key="piece"
+          class="cursor-pointer piece promotion-piece"
+          @click="handlePromotion(removePieceColor(piece))"
+          v-html="getPieceSVG(piece)"
+        ></div>
+      </div>
+    </Dialog>
+
+    <!-- Modale de fin de partie -->
+    <Dialog
       v-model:visible="showGameOverDialogLocal"
-      :message="gameOverMessage"
-      @go-home="$emit('goHome')"
-    />
+      modal
+      header="Partie terminée"
+      :closable="false"
+    >
+      <div class="text-center">
+        <h2 class="mb-4">{{ gameOverMessage }}</h2>
+        <Button label="Retour à l'accueil" @click="$emit('goHome')" />
+      </div>
+    </Dialog>
   </div>
 </template>
 
@@ -67,11 +108,9 @@ import {
 } from '@/model/Pieces.model';
 import type { PossibleMove } from '@/model/PossibleMove.model';
 import type { GameMoveDTO } from '@/modelDTO/GameMove.dto';
-import { computed, ref } from 'vue';
-import CapturedPieces from './chess/CapturedPieces.vue';
-import ChessCell from './chess/ChessCell.vue';
-import GameOverDialog from './chess/GameOverDialog.vue';
-import PromotionDialog from './chess/PromotionDialog.vue';
+import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
+import { ref, watch } from 'vue';
 
 const props = defineProps<{
   board: Case[][];
@@ -99,12 +138,19 @@ const selectedPiece = ref<{ row: number; col: number } | null>(null);
 const showPromotionDialogLocal = ref(props.showPromotionDialog);
 const showGameOverDialogLocal = ref(props.showGameOverDialog);
 
-const currentPlayerColor = computed(() => 
-  props.colorPlayer === 'Noirs' ? Color.BLACK : Color.WHITE
+watch(
+  () => props.showPromotionDialog,
+  (newVal) => {
+    showPromotionDialogLocal.value = newVal;
+  },
 );
 
-const movingPiece = ref<{i: number, j: number} | null>(null);
-const capturedPiece = ref<{i: number, j: number} | null>(null);
+watch(
+  () => props.showGameOverDialog,
+  (newVal) => {
+    showGameOverDialogLocal.value = newVal;
+  },
+);
 
 const handleCellClick = (row: number, col: number) => {
   const currentCase = props.board[row - 1][col - 1];
@@ -163,73 +209,4 @@ const getPieceFullProperty = (piece: Piece): FullPieceProperty => {
 const removePieceColor = (pieceType: FullPieceProperty): PieceType => {
   return pieceType.split('_')[1] as PieceType;
 };
-
-const isMovingPiece = (i: number, j: number): boolean => {
-  return movingPiece.value?.i === i && movingPiece.value?.j === j;
-};
-
-const isCapturedPiece = (i: number, j: number): boolean => {
-  return capturedPiece.value?.i === i && capturedPiece.value?.j === j;
-};
-
-const handleMove = async (moveData: GameMoveDTO) => {
-  movingPiece.value = { i: moveData.i, j: moveData.j };
-  
-  if (props.board[moveData.toI][moveData.toJ].piece) {
-    capturedPiece.value = { i: moveData.toI, j: moveData.toJ };
-  }
-
-  await new Promise(resolve => setTimeout(resolve, 300));
-
-  try {
-    const response = await move(moveData);
-  } finally {
-    movingPiece.value = null;
-    capturedPiece.value = null;
-  }
-};
 </script>
-
-<style scoped>
-.board-container {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-.piece-killed-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 0.5rem;
-}
-
-.captured-pieces-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-@media (max-width: 768px) {
-  .board-container {
-    padding: 0.5rem;
-  }
-
-  .piece-killed-container {
-    padding: 0.25rem;
-  }
-
-  .captured-pieces-section {
-    gap: 0.25rem;
-  }
-
-  h2 {
-    font-size: 1.25rem;
-    margin: 0.5rem 0;
-  }
-}
-</style>
