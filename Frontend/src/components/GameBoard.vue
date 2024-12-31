@@ -56,7 +56,11 @@
             <div
               v-if="board[row - 1][col - 1]?.piece"
               class="piece"
-              :class="{ 'piece-black': board[row - 1][col - 1]?.piece?.color === 'BLACK' }"
+              :class="{
+                'piece-black': board[row - 1][col - 1]?.piece?.color === 'BLACK',
+                'piece-moving': isMovingPiece(row - 1, col - 1),
+                'piece-captured': isCapturedPiece(row - 1, col - 1)
+              }"
               v-html="getPieceSVG(getPieceFullProperty(board[row - 1][col - 1]?.piece!))"
             ></div>
           </div>
@@ -152,6 +156,9 @@ watch(
   },
 );
 
+const movingPiece = ref<{i: number, j: number} | null>(null);
+const capturedPiece = ref<{i: number, j: number} | null>(null);
+
 const handleCellClick = (row: number, col: number) => {
   const currentCase = props.board[row - 1][col - 1];
   const currentPlayerColor = props.colorPlayer === 'Noirs' ? Color.BLACK : Color.WHITE;
@@ -208,5 +215,30 @@ const getPieceFullProperty = (piece: Piece): FullPieceProperty => {
 
 const removePieceColor = (pieceType: FullPieceProperty): PieceType => {
   return pieceType.split('_')[1] as PieceType;
+};
+
+const isMovingPiece = (i: number, j: number): boolean => {
+  return movingPiece.value?.i === i && movingPiece.value?.j === j;
+};
+
+const isCapturedPiece = (i: number, j: number): boolean => {
+  return capturedPiece.value?.i === i && capturedPiece.value?.j === j;
+};
+
+const handleMove = async (moveData: GameMoveDTO) => {
+  movingPiece.value = { i: moveData.i, j: moveData.j };
+  
+  if (props.board[moveData.toI][moveData.toJ].piece) {
+    capturedPiece.value = { i: moveData.toI, j: moveData.toJ };
+  }
+
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  try {
+    const response = await move(moveData);
+  } finally {
+    movingPiece.value = null;
+    capturedPiece.value = null;
+  }
 };
 </script>
