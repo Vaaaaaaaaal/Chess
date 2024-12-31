@@ -1,5 +1,6 @@
 import { Action } from "../../enums/action.enum";
 import { Color } from "../../enums/color.enum";
+import { MoveError } from "../../enums/moveError.enum";
 import { PieceType } from "../../enums/piece.enum";
 import { Case } from "../case";
 import { King } from "../Piece/king";
@@ -12,16 +13,24 @@ export class ChessRules {
     toJ: number,
     listCase: Case[][],
     userTurn: Color
-  ): boolean {
-    if (!this.isInBounds(toI, toJ)) return false;
-    if (piece.color !== userTurn) return false;
-    if (!piece.move(toI, toJ, listCase)) return false;
+  ): { valid: boolean; error?: MoveError } {
+    if (!this.isInBounds(toI, toJ))
+      return { valid: false, error: MoveError.INVALID_MOVE };
+
+    if (piece.color !== userTurn)
+      return { valid: false, error: MoveError.INVALID_TURN };
+
+    if (!piece.move(toI, toJ, listCase))
+      return { valid: false, error: MoveError.INVALID_MOVE };
 
     if (piece instanceof King) {
-      return this.isValidKingMove(piece, toI, toJ, listCase);
+      const kingStatus = this.isValidKingMove(piece, toI, toJ, listCase);
+      if (!kingStatus.valid) {
+        return { valid: false, error: MoveError.KING_IN_CHECK };
+      }
     }
 
-    return true;
+    return { valid: true };
   }
 
   static isInBounds(i: number, j: number): boolean {

@@ -69,6 +69,7 @@ import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
+import { MoveError } from '../../enums/moveError.enum';
 import GameBoard from '../components/GameBoard.vue';
 
 const toast = useToast();
@@ -144,11 +145,19 @@ const handleMove = async (moveData: GameMoveDTO) => {
 
       handleGameResult(response, moveData.toI + 1, moveData.toJ + 1);
     } else {
+      const errorMessages = {
+        [MoveError.INVALID_TURN]: "Ce n'est pas votre tour",
+        [MoveError.INVALID_MOVE]: "Ce mouvement n'est pas valide",
+        [MoveError.KING_IN_CHECK]: "Ce mouvement mettrait votre roi en échec",
+        [MoveError.MUST_PROTECT_KING]: "Vous devez protéger votre roi",
+        [MoveError.MUST_MOVE_KING]: "Votre roi est en échec, vous devez le déplacer"
+      };
+
       toast.add({
-        severity: 'error',
+        severity: response.error === MoveError.KING_IN_CHECK ? 'warn' : 'error',
         summary: 'Mouvement invalide',
-        detail: 'Veuillez réessayer',
-        life: 5000,
+        detail: errorMessages[response.error] || 'Veuillez réessayer',
+        life: 3000
       });
     }
   } catch (error) {

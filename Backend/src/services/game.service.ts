@@ -11,6 +11,7 @@ import {
   deleteGameStorage,
   getGameStorage,
 } from "../algorithm/chessStorage";
+import { ChessRules } from "../algorithm/rules/ChessRules";
 import { Action } from "../enums/action.enum";
 import { PieceType } from "../enums/piece.enum";
 import { ChessReplay } from "../interfaces/chessReplay.interface";
@@ -133,6 +134,24 @@ export class GameService {
   ): Promise<ReturnAction | undefined> {
     let game = getGameStorage(userId);
     if (!game) return undefined;
+
+    const moveResult = ChessRules.isValidMove(
+      game.getListCase()[movePieceBody.i][movePieceBody.j].piece!,
+      movePieceBody.toI,
+      movePieceBody.toJ,
+      game.getListCase(),
+      game.getUserTurn()
+    );
+
+    if (!moveResult.valid) {
+      return {
+        success: false,
+        error: moveResult.error,
+        listCase: game.getListCase(),
+        turn: game.getUserTurn(),
+        pieceKilled: game.getPieceKilled(),
+      };
+    }
 
     let actionResult: string[] = [];
 
