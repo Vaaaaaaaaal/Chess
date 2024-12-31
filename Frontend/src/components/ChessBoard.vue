@@ -66,5 +66,21 @@ export class GameStateManager {
   public canRedo(): boolean {
     return this.currentIndex < this.moveHistory.length - 1;
   }
+
+  private checkGameStatus(): void {
+    if (this.currentState.result?.includes('KINGLOSE')) {
+      const winner = this.currentState.turn === 'WHITE' ? 'BLACK' : 'WHITE';
+      gameEvents.gameOver(winner);
+    }
+
+    if (this.currentState.result?.includes('CHECK')) {
+      gameEvents.checkDetected(this.currentState.turn);
+    }
+
+    if (this.currentState.result?.includes('STALEMATE')) {
+      gameEvents.gameOver('DRAW');
+      gameBus.emit('game:stalemate');
+    }
+  }
 }
 // ... existing code ...
