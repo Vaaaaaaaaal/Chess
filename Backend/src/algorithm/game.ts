@@ -9,163 +9,201 @@ import { Piece } from "./Piece/piece";
 import { Queen } from "./Piece/queen";
 import { Rook } from "./Piece/rook";
 
-
 let listPiece: PieceType[] = [
-    PieceType['ROOK'], PieceType['KNIGHT'], PieceType['BISHOP'], PieceType['QUEEN'],PieceType['KING'], PieceType['BISHOP'], PieceType['KNIGHT'], PieceType['ROOK']]
+  PieceType["ROOK"],
+  PieceType["KNIGHT"],
+  PieceType["BISHOP"],
+  PieceType["QUEEN"],
+  PieceType["KING"],
+  PieceType["BISHOP"],
+  PieceType["KNIGHT"],
+  PieceType["ROOK"],
+];
 
-export class Game{
+export class Game {
+  private listCase: Case[][] = [];
+  private pieceKilled: Piece[] = [];
+  private userTurn: Color = Color.WHITE;
 
-    private listCase: Case[][] = [];
-    private pieceKilled: Piece[] = [];
-    private userTurn: Color = Color.WHITE;
-    
-    private ownerColor: Color = Color.WHITE;
-    private idInDB: number = 0;
+  private ownerColor: Color = Color.WHITE;
+  private idInDB: number = 0;
 
-    private pieceToPromote = {i: -1, j: -1, color: Color.WHITE};
+  private pieceToPromote = { i: -1, j: -1, color: Color.WHITE };
 
-    initGame(){
-        this.listCase = []
-        for(let i = 0; i < 8; i++){
-            this.listCase.push([])
-            let c = 0;
-            if(i%2 == 0){
-                c =  1;
-            }
-            for(let j = 0; j < 8; j++){
-                let color = c%2;
-                c++;
+  initGame() {
+    this.listCase = [];
+    for (let i = 0; i < 8; i++) {
+      this.listCase.push([]);
+      let c = 0;
+      if (i % 2 == 0) {
+        c = 1;
+      }
+      for (let j = 0; j < 8; j++) {
+        let color = c % 2;
+        c++;
 
-                let pieceColor = 1;
-                if(i == 0 || i == 1){
-                    pieceColor = 0
-                }
-
-                if(i == 0 || i == 7){
-                    this.listCase[i].push(new Case(color, this.generatePiece(listPiece[j], pieceColor, i, j)))
-                }else if(i == 1 || i == 6){
-                    this.listCase[i].push(new Case(color, this.generatePiece(PieceType['PAWN'], pieceColor, i, j)))
-                }else{
-                    this.listCase[i].push(new Case(color))
-                }
-            }
-        }
-    }
-
-    private generatePiece(type: PieceType, pieceColor: number, i: number, j: number){
-        let p: Piece = new Pawn(type, pieceColor, i, j);
-
-        switch (type) {
-            case 'KING':
-                p = new King(type, pieceColor, i, j)
-                break;
-            case 'BISHOP':
-                p = new Bishop(type, pieceColor, i, j)
-                break;
-            case 'QUEEN':
-                p = new Queen(type, pieceColor, i, j)
-                break;
-            case 'ROOK':
-                p = new Rook(type, pieceColor, i, j)
-                break;
-            case 'KNIGHT':
-                p = new Knight(type, pieceColor, i, j)
-                break;
+        let pieceColor = 1;
+        if (i == 0 || i == 1) {
+          pieceColor = 0;
         }
 
-        return p;
-    }
-
-    public getFormatedGame(){
-        let result: string[] = [];
-
-        this.getListCase().forEach(element=>{
-            element.forEach(c =>{
-                if(c.piece && c.piece.pieceType == 'KING'){
-                    const r = King.checkKingStatus(this.getListCase(), c.piece);
-                    result.push(r.status+":"+r.king.color);
-                }
-            })
-        })
-
-        return { listCase: this.listCase, 
-            turn: this.userTurn, 
-            pieceKilled: this.pieceKilled,
-            result: result,
-            ownerColor: this.ownerColor
+        if (i == 0 || i == 7) {
+          this.listCase[i].push(
+            new Case(color, this.generatePiece(listPiece[j], pieceColor, i, j))
+          );
+        } else if (i == 1 || i == 6) {
+          this.listCase[i].push(
+            new Case(
+              color,
+              this.generatePiece(PieceType["PAWN"], pieceColor, i, j)
+            )
+          );
+        } else {
+          this.listCase[i].push(new Case(color));
         }
+      }
+    }
+  }
+
+  private generatePiece(
+    type: PieceType,
+    pieceColor: number,
+    i: number,
+    j: number
+  ) {
+    let p: Piece = new Pawn(type, pieceColor, i, j);
+
+    switch (type) {
+      case "KING":
+        p = new King(type, pieceColor, i, j);
+        break;
+      case "BISHOP":
+        p = new Bishop(type, pieceColor, i, j);
+        break;
+      case "QUEEN":
+        p = new Queen(type, pieceColor, i, j);
+        break;
+      case "ROOK":
+        p = new Rook(type, pieceColor, i, j);
+        break;
+      case "KNIGHT":
+        p = new Knight(type, pieceColor, i, j);
+        break;
     }
 
-    public isPieceToPromote(){
-        return this.pieceToPromote.i != -1 && this.pieceToPromote.j != -1 
-    }
+    return p;
+  }
 
-    public getPieceToPromote(){
-        return this.pieceToPromote
-    }
+  public getFormatedGame() {
+    let result: string[] = [];
 
-    public setPieceToPromote(i: number, j: number, color: Color){
-        this.pieceToPromote.i = i;
-        this.pieceToPromote.j = j;
-        this.pieceToPromote.color = color; 
-    }
+    this.getListCase().forEach((element) => {
+      element.forEach((c) => {
+        if (c.piece && c.piece.pieceType == "KING") {
+          const r = King.checkKingStatus(this.getListCase(), c.piece);
+          result.push(r.status + ":" + r.king.color);
+        }
+      });
+    });
 
-    public nextTurn(){
-        console.log("fd");
-        if(this.getUserTurn() == 'WHITE') return this.setUserTurn(Color['BLACK']);
-        if(this.getUserTurn() == 'BLACK') return this.setUserTurn(Color['WHITE']);
-    }
+    return {
+      listCase: this.listCase,
+      turn: this.userTurn,
+      pieceKilled: this.pieceKilled,
+      result: result,
+      ownerColor: this.ownerColor,
+    };
+  }
 
-    public setOwnerColor(color: Color){
-        this.ownerColor = color;
-    }
+  public isPieceToPromote() {
+    return this.pieceToPromote.i != -1 && this.pieceToPromote.j != -1;
+  }
 
-    public setIdInBd(id: number){
-        this.idInDB = id;
-    }
+  public getPieceToPromote() {
+    return this.pieceToPromote;
+  }
 
-    public getListCase(){
-        return this.listCase;
-    }
+  public setPieceToPromote(i: number, j: number, color: Color) {
+    this.pieceToPromote.i = i;
+    this.pieceToPromote.j = j;
+    this.pieceToPromote.color = color;
+  }
 
-    public getPieceKilled(){
-        return this.pieceKilled;
-    }
+  public nextTurn() {
+    console.log("fd");
+    if (this.getUserTurn() == "WHITE") return this.setUserTurn(Color["BLACK"]);
+    if (this.getUserTurn() == "BLACK") return this.setUserTurn(Color["WHITE"]);
+  }
 
+  public setOwnerColor(color: Color) {
+    this.ownerColor = color;
+  }
 
-    public getPieceKilledByColor(color: Color){
-        return this.pieceKilled.filter(f => f.color == color);
-    }
+  public setIdInBd(id: number) {
+    this.idInDB = id;
+  }
 
-    public setPieceKilled(pieces: Piece[]){
-        this.pieceKilled = pieces;
-    }
+  public getListCase() {
+    return this.listCase;
+  }
 
-    public getUserTurn(){
-        return this.userTurn;
-    }
+  public getPieceKilled() {
+    return this.pieceKilled;
+  }
 
-    public setUserTurn(newUserTurn: Color){
-        this.userTurn = newUserTurn;
-    }
+  public getPieceKilledByColor(color: Color) {
+    return this.pieceKilled.filter((f) => f.color == color);
+  }
 
-    public getOwnerColor(){
-        return this.ownerColor;
-    }
+  public setPieceKilled(pieces: Piece[]) {
+    this.pieceKilled = pieces;
+  }
 
-    public getIdInDB(){
-        return this.idInDB;
-    }
+  public getUserTurn() {
+    return this.userTurn;
+  }
+
+  public setUserTurn(newUserTurn: Color) {
+    this.userTurn = newUserTurn;
+  }
+
+  public getOwnerColor() {
+    return this.ownerColor;
+  }
+
+  public getIdInDB() {
+    return this.idInDB;
+  }
 }
 
+function evaluatePosition(listCase: Case[][]): number {
+  let score = 0;
 
+  for (let row of listCase) {
+    for (let c of row) {
+      if (c.piece) {
+        score += getPieceValue(c.piece);
+      }
+    }
+  }
 
+  return score;
+}
 
-
-
-
-
-
-
-
-
+function getPieceValue(piece: Piece): number {
+  switch (piece.pieceType) {
+    case PieceType.PAWN:
+      return 1;
+    case PieceType.KNIGHT:
+    case PieceType.BISHOP:
+      return 3;
+    case PieceType.ROOK:
+      return 5;
+    case PieceType.QUEEN:
+      return 9;
+    case PieceType.KING:
+      return 100; // Valeur arbitraire élevée pour le roi
+    default:
+      return 0;
+  }
+}
