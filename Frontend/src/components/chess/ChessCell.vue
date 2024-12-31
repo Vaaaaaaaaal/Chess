@@ -1,5 +1,6 @@
 <template>
   <div
+    :data-cy="`cell-${row}-${col}`"
     :class="[
       'chess-cell cursor-pointer',
       (row + col) % 2 === 0 ? 'bg-white' : 'noir',
@@ -12,42 +13,17 @@
     ]"
     @click="!isReplayMode && handleClick"
   >
-    <CellCoordinates 
-      :row="row" 
-      :col="col" 
-      :colorPlayer="colorPlayer" 
-    />
-    <ChessPiece
+    <div 
       v-if="piece"
-      :piece="piece"
-      :isMoving="isMoving"
-      :isCaptured="isCaptured"
-    />
+      class="piece"
+      :data-piece-type="piece.pieceType"
+      :data-piece-color="piece.color"
+      :class="{
+        'piece-black': piece.color === 'BLACK',
+        'piece-moving': isMoving,
+        'piece-captured': isCaptured
+      }"
+      v-html="getPieceSVG(`${piece.color}_${piece.pieceType}` as FullPieceProperty)"
+    ></div>
   </div>
-</template>
-
-<script setup lang="ts">
-import type { Piece } from '@/model/Pieces.model';
-import CellCoordinates from './CellCoordinates.vue';
-import ChessPiece from './ChessPiece.vue';
-
-defineProps<{
-  row: number;
-  col: number;
-  piece?: Piece;
-  colorPlayer: string;
-  isPossibleMove: boolean;
-  isSelected: boolean;
-  isLastMoveFrom: boolean;
-  isLastMoveTo: boolean;
-  isMoving: boolean;
-  isCaptured: boolean;
-  isReplayMode?: boolean;
-}>();
-
-const emit = defineEmits<{
-  (e: 'click', row: number, col: number): void;
-}>();
-
-const handleClick = () => emit('click', row, col);
-</script> 
+</template> 
