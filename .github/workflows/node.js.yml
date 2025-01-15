@@ -17,8 +17,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: Backend/package-lock.json  # Ajoutez cette ligne
-    - working-directory: ./Backend    # Remplacez la commande cd
+        cache-dependency-path: Backend/package-lock.json 
+    - working-directory: ./Backend
       run: |
         npm ci
         npm run build --if-present
