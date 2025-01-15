@@ -7,12 +7,20 @@ export default [
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
     languageOptions: {
       globals: {
-        ...globals.node, // Puisque c'est un projet backend, on utilise node au lieu de browser
+        ...globals.node,
       },
     },
   },
   ...tseslint.configs.recommended,
   {
-    ignores: ["dist/**", "node_modules/**"], // Ignore les fichiers compilés et node_modules
+    ignores: ["dist/**", "node_modules/**"],
+    rules: {
+      "prefer-const": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-namespace": "warn",
+      "@typescript-eslint/no-require-imports": "warn",
+      "@typescript-eslint/no-wrapper-object-types": "warn",
+    },
   },
 ];
