@@ -7,11 +7,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-# Copier les fichiers de configuration TypeScript
-COPY tsconfig*.json ./
-
-# Copier le reste du code source
-COPY src/ ./src/
+# Copier tous les fichiers nécessaires pour le build
+COPY . .
 
 # Build de l'application avec plus de logs
 RUN npm run build --verbose
