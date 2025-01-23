@@ -13,8 +13,8 @@ COPY tsconfig*.json ./
 # Copier le reste du code source
 COPY src/ ./src/
 
-# Build de l'application
-RUN npm run build
+# Build de l'application avec plus de logs
+RUN npm run build --verbose
 
 # Étape de production
 FROM node:18-alpine
