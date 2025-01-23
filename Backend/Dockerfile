@@ -2,18 +2,37 @@
 FROM node:18-alpine as builder
 
 WORKDIR /app
+
+# Copier d'abord les fichiers de dépendances pour optimiser le cache Docker
 COPY package*.json ./
 RUN npm ci
-COPY . .
+
+# Copier les fichiers de configuration TypeScript
+COPY tsconfig*.json ./
+
+# Copier le reste du code source
+COPY src/ ./src/
+
+# Build de l'application
 RUN npm run build
 
 # Étape de production
 FROM node:18-alpine
 
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY --from=builder /app/dist ./dist
 
+# Copier uniquement les fichiers nécessaires
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Copier uniquement les fichiers buildés depuis l'étape précédente
+COPY --from=builder /app/build ./build
+
+# Définir les variables d'environnement pour la production
+ENV NODE_ENV=production
+
+# Exposer le port de l'application
 EXPOSE 3000
-CMD ["node", "dist/app.js"]
+
+# Commande de démarrage
+CMD ["node", "build/app.js"]

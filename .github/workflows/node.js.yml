@@ -1,47 +1,42 @@
-name: Node.js CI
+name: Node.js CI/CD
+
 on:
   push:
     branches: "*"
-  pull_request:
-    branches: "*"
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-          cache-dependency-path: Backend/package-lock.json
+          node-version: "18"
 
       - name: Install dependencies
         working-directory: ./Backend
         run: npm ci
 
-      - name: Run lint and type check
+      - name: Run ESLint
         working-directory: ./Backend
-        run: |
-          npm run lint
-          npm run typecheck
+        run: npm run lint
 
-      - name: Build
+      - name: Type check
         working-directory: ./Backend
-        run: npm run build --if-present
+        run: npm run typecheck
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./Backend
-          push: false
-          tags: chess-backend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/chess-backend:latest
